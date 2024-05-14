@@ -2,12 +2,18 @@
 using System.IO.Ports;
 using System.Threading;
 
+public delegate void DataReceivedEventHandler(string data);
+
 public class SerialPortManager
 {
+
+	// Define el evento que se disparará cuando se reciban datos
+	public event DataReceivedEventHandler DataReceived;
+
 	private SerialPort serialPort;
 	private bool isConnected;
 
-	public SerialPortManager(string portName, int baudRate)
+	public SerialPortManager(string portName = "COM13", int baudRate = 9600)
 	{
 		serialPort = new SerialPort(portName, baudRate);
 		serialPort.DataReceived += SerialPort_DataReceived;
@@ -43,7 +49,10 @@ public class SerialPortManager
 
 	private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
 	{
-		// Handle data received from the serial port
+		string data = serialPort.ReadExisting(); 
+		data = data.Contains("Card UID:") ? data.Trim() : null;
+
+		if (data != null) DataReceived?.Invoke(data);
 	}
 
 	public bool IsConnected()

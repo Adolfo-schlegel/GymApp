@@ -7,6 +7,7 @@ using System.IO.Ports;
 using ArduinoClient.Models;
 using ArduinoClient.Tools;
 using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
+using DocumentFormat.OpenXml.EMMA;
 
 namespace ArduinoClient
 {
@@ -17,6 +18,8 @@ namespace ArduinoClient
 		private List<UsuarioDB> LstUsers;
 		private UsuarioDB ScannedUser;
 		private ArduinoManager arduinoManager;
+		private SerialPortManager serialManager;
+
 		public Cliente(ArduinoManager arduinoManager)
 		{			
 			Init();
@@ -27,10 +30,13 @@ namespace ArduinoClient
 			InitializeComponent();
 
 			LstUsers = new List<UsuarioDB>();
+
 			Hilo = new Thread(controlDeAcceso);
 			Hilo.Name = "AccessDoorProcess";
 			Hilo.Start();
-		}		
+		}
+
+
 		private void Cliente_Load(object sender, EventArgs e)
 		{
 			refreshGrid();
