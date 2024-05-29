@@ -8,17 +8,18 @@ using ArduinoClient.Models;
 using ArduinoClient.Tools;
 using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
 using DocumentFormat.OpenXml.EMMA;
+using System.IO;
 
 namespace ArduinoClient
 {
 	public partial class Cliente : Form
 	{
-		private Thread Hilo;
 		private int ClickedId;
+
+		private Thread Hilo;		
 		private List<UsuarioDB> LstUsers;
 		private UsuarioDB ScannedUser;
 		private ArduinoManager arduinoManager;
-		private SerialPortManager serialManager;
 
 		public Cliente(ArduinoManager arduinoManager)
 		{			
@@ -158,7 +159,6 @@ namespace ArduinoClient
 		}
 		private void cleanLabels()
 		{		
-			// Modificar id texto del hilo principal
 			lblId.Invoke(new MethodInvoker(
 			delegate
 			{
@@ -183,6 +183,7 @@ namespace ArduinoClient
 		{
 			while(true)
 			{
+				Thread.Sleep(100);
 				var data = arduinoManager.GetNextReceivedData();
 				
 				if (data != null)
@@ -196,24 +197,24 @@ namespace ArduinoClient
 		public bool isUserExist(string idCard) => LstUsers.Exists(u => u.Codigo ==idCard);
 		private void EvenModifyUser_DoubleClick(object sender, DataGridViewCellEventArgs e)
 		{
-				if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
-				{
-					Hilo.Suspend();//tengo que suspender el hilo que esta actualizando los valores de este formulario, sino cuando entre al otro formulario, este hilo mas el otro hilo van a funcionar turnandose y por ende se van a actualizar los valores en este forms
+			if (e.RowIndex >= 0 && e.ColumnIndex >= 0)
+			{
+				Hilo.Suspend();//tengo que suspender el hilo que esta actualizando los valores de este formulario, sino cuando entre al otroformulario, este hilo mas el otro hilo van a funcionar turnandose y por ende se van a actualizar los valores en este forms
 
-					var row = dataGridView2.Rows[e.RowIndex];
+				var row = dataGridView2.Rows[e.RowIndex];
 
-					UsuarioDB user = row.DataBoundItem as UsuarioDB;
+				UsuarioDB user = row.DataBoundItem as UsuarioDB;
 
-					ModifyUsuario userForm = new ModifyUsuario(arduinoManager);
+				ModifyUsuario userForm = new ModifyUsuario(arduinoManager);
 
-					userForm.fillTextBoxUser(user.Codigo, user.Id, user.Nombre, user.Apellido, user.Documento.ToString(), user.Sexo, user.Celular.ToString(), user.MedioPago, user.Fecha.ToString(), user.Monto.ToString(), user.Correo);
+				userForm.fillTextBoxUser(user.Codigo, user.Id, user.Nombre, user.Apellido, user.Documento.ToString(), user.Sexo,user.Celular.ToString(), user.MedioPago, user.Fecha.ToString(), user.Monto.ToString(), user.Correo);
 
-					userForm.ShowDialog();
+				userForm.ShowDialog();
 
-					refreshGrid();
+				refreshGrid();
 
-					Hilo.Resume();//reactivo el hilo
-				}
+				Hilo.Resume();//reactivo el hilo
+			}
 		}
 		private void EventCliente_FormClosing(object sender, FormClosingEventArgs e)
 		{
@@ -237,16 +238,12 @@ namespace ArduinoClient
 		{
 			if (e.RowIndex >= 0)
 			{				
-				// Obtener la fila exacta seleccionada
 				DataGridViewRow filaSeleccionada = dataGridView2.Rows[e.RowIndex];
 
-				// Obtener el objeto asociado a la fila seleccionada
 				UsuarioDB usuarioSeleccionado = filaSeleccionada.DataBoundItem as UsuarioDB;
 
 				ClickedId = usuarioSeleccionado.Id;
-				//ClickedRow = e.RowIndex;
 
-				// Marcar la fila seleccionada
 				dataGridView2.Rows[e.RowIndex].Selected = true;
 			}
 		}
@@ -257,6 +254,7 @@ namespace ArduinoClient
 			{ 				
 				SqliteDataAccess.UpDateUser(new UsuarioDB {Id = int.Parse(lblId.Text), Fecha = DateTime.Today.ToShortDateString() });							
 				refreshGrid();
+
 				MessageBox.Show("Usuario al dia");
 			}
 			catch (Exception ex)
@@ -264,10 +262,6 @@ namespace ArduinoClient
 				MessageBox.Show(ex.Message);
 			}
 			
-		}
-		private void chekEnviarCorreo_CheckedChanged(object sender, EventArgs e)
-		{
-
 		}
 		private void agregarUsuarioToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -281,7 +275,7 @@ namespace ArduinoClient
 
 			refreshGrid();
 
-			Hilo.Resume();//reactivo el hilo
+			Hilo.Resume();
 		}
 		private void abrirPuertaToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -300,7 +294,6 @@ namespace ArduinoClient
 						refreshGrid();
 
 						MessageBox.Show("Usuario eliminado");
-
 					}
 				}
 				catch (Exception ex)
@@ -315,7 +308,34 @@ namespace ArduinoClient
 		}
 		private void exportarPlanillaToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			using (FolderBrowserDialog folderBrowser = new FolderBrowserDialog())
+			{
+				DialogResult result = folderBrowser.ShowDialog();
 
+				if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowser.SelectedPath))
+				{
+					string directoryPath = folderBrowser.SelectedPath;
+					string fileName = "RegistroUsuariosGYM.xlsx";
+
+					try
+					{
+						ExcelManager excelManager = new ExcelManager();
+
+						excelManager.AddSheet($"Gym - {DateTime.Now.ToString("dd-MM-yyyy")}");
+
+						excelManager.AddItems(LstUsers);
+
+						excelManager.SaveAs(directoryPath, fileName);
+
+						MessageBox.Show("Archivo guardado exitosamente en: " + directoryPath + fileName);
+					}
+					catch (Exception ex)
+					{
+						MessageBox.Show("Error al guardar el archivo: " + ex.Message);
+					}
+				}
+			}
+		
 		}
 		private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
 		{

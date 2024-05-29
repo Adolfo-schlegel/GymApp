@@ -1,9 +1,6 @@
 ﻿using ArduinoClient.Models;
 using ArduinoClient.Tools;
-using SpreadsheetLight;
 using System;
-using System.Configuration;
-using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 namespace ArduinoClient

@@ -34,7 +34,6 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
 			this.artanPanel1 = new ArduinoClient.Models.ArtanPanel();
-			this.chekEnviarCorreo = new System.Windows.Forms.CheckBox();
 			this.lblId = new System.Windows.Forms.Label();
 			this.label15 = new System.Windows.Forms.Label();
 			this.lblApellido = new System.Windows.Forms.Label();
@@ -92,7 +91,6 @@
 			// 
 			this.artanPanel1.BackColor = System.Drawing.Color.White;
 			this.artanPanel1.BorderRadius = 20;
-			this.artanPanel1.Controls.Add(this.chekEnviarCorreo);
 			this.artanPanel1.Controls.Add(this.lblId);
 			this.artanPanel1.Controls.Add(this.label15);
 			this.artanPanel1.Controls.Add(this.lblApellido);
@@ -134,20 +132,6 @@
 			this.artanPanel1.Padding = new System.Windows.Forms.Padding(4, 0, 4, 15);
 			this.artanPanel1.Size = new System.Drawing.Size(1110, 629);
 			this.artanPanel1.TabIndex = 21;
-			// 
-			// chekEnviarCorreo
-			// 
-			this.chekEnviarCorreo.AutoSize = true;
-			this.chekEnviarCorreo.BackColor = System.Drawing.Color.Transparent;
-			this.chekEnviarCorreo.Font = new System.Drawing.Font("Microsoft Sans Serif", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.chekEnviarCorreo.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
-			this.chekEnviarCorreo.Location = new System.Drawing.Point(928, 428);
-			this.chekEnviarCorreo.Name = "chekEnviarCorreo";
-			this.chekEnviarCorreo.Size = new System.Drawing.Size(182, 22);
-			this.chekEnviarCorreo.TabIndex = 14;
-			this.chekEnviarCorreo.Text = "Enviar correo deudores";
-			this.chekEnviarCorreo.UseVisualStyleBackColor = false;
-			this.chekEnviarCorreo.CheckedChanged += new System.EventHandler(this.chekEnviarCorreo_CheckedChanged);
 			// 
 			// lblId
 			// 
@@ -754,7 +738,6 @@
 		private System.Windows.Forms.Label label13;
 		private System.Windows.Forms.Button btnAtualizarCuota;
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
-		private System.Windows.Forms.CheckBox chekEnviarCorreo;
 		private System.Windows.Forms.BindingSource usuarioDBBindingSource;
 		private System.Windows.Forms.Label label15;
 		private Models.ArtanPanel artanPanel1;

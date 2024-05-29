@@ -75,7 +75,6 @@ D:\Proyectos\GymApp\Gym\src\bin\Release\ArduinoClient.exe
 D:\Proyectos\GymApp\Gym\src\bin\Release\ArduinoClient.pdb
 D:\Proyectos\GymApp\Gym\src\bin\Release\Dapper.dll
 D:\Proyectos\GymApp\Gym\src\bin\Release\DocumentFormat.OpenXml.dll
-D:\Proyectos\GymApp\Gym\src\bin\Release\SpreadsheetLight.dll
 D:\Proyectos\GymApp\Gym\src\bin\Release\System.Buffers.dll
 D:\Proyectos\GymApp\Gym\src\bin\Release\System.Data.SQLite.dll
 D:\Proyectos\GymApp\Gym\src\bin\Release\System.Drawing.Common.dll
@@ -86,7 +85,6 @@ D:\Proyectos\GymApp\Gym\src\bin\Release\System.Runtime.CompilerServices.Unsafe.d
 D:\Proyectos\GymApp\Gym\src\bin\Release\System.ValueTuple.dll
 D:\Proyectos\GymApp\Gym\src\bin\Release\Dapper.xml
 D:\Proyectos\GymApp\Gym\src\bin\Release\DocumentFormat.OpenXml.xml
-D:\Proyectos\GymApp\Gym\src\bin\Release\SpreadsheetLight.xml
 D:\Proyectos\GymApp\Gym\src\bin\Release\System.Buffers.xml
 D:\Proyectos\GymApp\Gym\src\bin\Release\System.Data.SQLite.xml
 D:\Proyectos\GymApp\Gym\src\bin\Release\System.IO.Packaging.xml
@@ -104,3 +102,11 @@ D:\Proyectos\GymApp\Gym\src\obj\Release\GymRFID.csproj.CoreCompileInputs.cache
 D:\Proyectos\GymApp\Gym\src\obj\Release\GymRFID.csproj.CopyComplete
 D:\Proyectos\GymApp\Gym\src\obj\Release\ArduinoClient.exe
 D:\Proyectos\GymApp\Gym\src\obj\Release\ArduinoClient.pdb
+D:\Proyectos\GymApp\Gym\src\bin\Release\ClosedXML.dll
+D:\Proyectos\GymApp\Gym\src\bin\Release\ExcelNumberFormat.dll
+D:\Proyectos\GymApp\Gym\src\bin\Release\Irony.dll
+D:\Proyectos\GymApp\Gym\src\bin\Release\SixLabors.Fonts.dll
+D:\Proyectos\GymApp\Gym\src\bin\Release\XLParser.dll
+D:\Proyectos\GymApp\Gym\src\bin\Release\ClosedXML.xml
+D:\Proyectos\GymApp\Gym\src\bin\Release\ExcelNumberFormat.xml
+D:\Proyectos\GymApp\Gym\src\bin\Release\SixLabors.Fonts.xml
