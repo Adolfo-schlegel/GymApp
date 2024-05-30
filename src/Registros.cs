@@ -181,18 +181,25 @@ namespace ArduinoClient
 		}
 		private void controlDeAcceso()
 		{
-			while(true)
+			try
 			{
-				Thread.Sleep(100);
-				var data = arduinoManager.GetNextReceivedData();
-				
-				if (data != null)
+				while (true)
 				{
-					var code = data.Replace("Card UID: ", "");
+					Thread.Sleep(100);
+					var data = arduinoManager.GetNextReceivedData();
 
-					showUserInfo(code);					
-				}					
-			}		
+					if (data != null)
+					{
+						var code = data.Replace("Card UID: ", "");
+
+						showUserInfo(code);
+					}
+				}
+			}
+			catch(Exception ex)
+			{
+				MessageBox.Show("Registros control de acceso -> " +  ex.Message);
+			}
 		}
 		public bool isUserExist(string idCard) => LstUsers.Exists(u => u.Codigo ==idCard);
 		private void EvenModifyUser_DoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -315,7 +322,6 @@ namespace ArduinoClient
 				if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowser.SelectedPath))
 				{
 					string directoryPath = folderBrowser.SelectedPath;
-					string fileName = "RegistroUsuariosGYM.xlsx";
 
 					try
 					{
@@ -325,9 +331,9 @@ namespace ArduinoClient
 
 						excelManager.AddItems(LstUsers);
 
-						excelManager.SaveAs(directoryPath, fileName);
+						excelManager.SaveAs(directoryPath);
 
-						MessageBox.Show("Archivo guardado exitosamente en: " + directoryPath + fileName);
+						MessageBox.Show("Archivo guardado exitosamente en: " + directoryPath);
 					}
 					catch (Exception ex)
 					{
@@ -339,6 +345,7 @@ namespace ArduinoClient
 		}
 		private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+			MessageBox.Show(arduinoManager.readThread.IsAlive + "Reading is " +arduinoManager.reading);
 			cleanLabels();
 		}
 	}

@@ -1,6 +1,7 @@
 ﻿using ArduinoClient.Models;
 using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -59,7 +60,7 @@ namespace ArduinoClient.Tools
 		{
 			var range = worksheet.Row(row).CellsUsed();
 			range.Style.Fill.BackgroundColor = XLColor.Blue;
-			range.Style.Font.FontColor = XLColor.Blue;
+			range.Style.Font.FontColor = XLColor.White;
 		}
 		public void Calculate(string cell, string formula)
 			=> worksheet.Cell(cell).FormulaA1 = formula;
@@ -119,8 +120,15 @@ namespace ArduinoClient.Tools
 			return "OK";
 		}
 
-		public void SaveAs(string path, string fileName)
-			=> workbook.SaveAs(path + @"\" + fileName);
+		public void SaveAs(string path)
+		{
+
+			workbook.SaveAs(path + @"\" + GetLogFileName());
+		}
+		private string GetLogFileName()
+		{
+			return "RegistroGym - " + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
+		}
 	}
 	public class Head
 	{

@@ -694,7 +694,7 @@
 			this.MinimumSize = new System.Drawing.Size(1130, 672);
 			this.Name = "Cliente";
 			this.ShowInTaskbar = false;
-			this.Text = "SportLife";
+			this.Text = "System by (Schlegel Adolfo)";
 			this.TransparencyKey = System.Drawing.Color.Gray;
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.EventCliente_FormClosing);
 			this.Load += new System.EventHandler(this.Cliente_Load);
