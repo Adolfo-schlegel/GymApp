@@ -33,7 +33,9 @@
 			System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Cliente));
 			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+			this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.fondoPanel = new ArduinoClient.Models.ArtanPanel();
+			this.txtSearch = new System.Windows.Forms.TextBox();
 			this.btnAtualizarCuota = new ArduinoClient.Models.RJButton();
 			this.btnAgregar = new ArduinoClient.Models.RJButton();
 			this.ledPanel = new ArduinoClient.Models.ArtanPanel();
@@ -87,10 +89,16 @@
 			this.menuStrip1.SuspendLayout();
 			this.SuspendLayout();
 			// 
+			// contextMenuStrip1
+			// 
+			this.contextMenuStrip1.Name = "contextMenuStrip1";
+			this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
+			// 
 			// fondoPanel
 			// 
 			this.fondoPanel.BackColor = System.Drawing.Color.White;
 			this.fondoPanel.BorderRadius = 10;
+			this.fondoPanel.Controls.Add(this.txtSearch);
 			this.fondoPanel.Controls.Add(this.btnAtualizarCuota);
 			this.fondoPanel.Controls.Add(this.btnAgregar);
 			this.fondoPanel.Controls.Add(this.ledPanel);
@@ -132,6 +140,14 @@
 			this.fondoPanel.Padding = new System.Windows.Forms.Padding(4, 0, 4, 15);
 			this.fondoPanel.Size = new System.Drawing.Size(922, 647);
 			this.fondoPanel.TabIndex = 21;
+			// 
+			// txtSearch
+			// 
+			this.txtSearch.Location = new System.Drawing.Point(658, 3);
+			this.txtSearch.Name = "txtSearch";
+			this.txtSearch.Size = new System.Drawing.Size(242, 20);
+			this.txtSearch.TabIndex = 39;
+			this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
 			// 
 			// btnAtualizarCuota
 			// 
@@ -181,9 +197,9 @@
 			this.ledPanel.GradientAngle = 90F;
 			this.ledPanel.GradientBottomColor = System.Drawing.SystemColors.Control;
 			this.ledPanel.GradientTopColor = System.Drawing.SystemColors.Control;
-			this.ledPanel.Location = new System.Drawing.Point(764, 471);
+			this.ledPanel.Location = new System.Drawing.Point(583, 0);
 			this.ledPanel.Name = "ledPanel";
-			this.ledPanel.Size = new System.Drawing.Size(30, 30);
+			this.ledPanel.Size = new System.Drawing.Size(27, 27);
 			this.ledPanel.TabIndex = 36;
 			// 
 			// lblId
@@ -246,7 +262,7 @@
 			dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
 			dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
 			dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			dataGridViewCellStyle2.ForeColor = System.Drawing.Color.White;
+			dataGridViewCellStyle2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(150)))), ((int)(((byte)(200)))));
 			dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
 			dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.White;
 			dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
@@ -777,6 +793,8 @@
 		private Models.ArtanPanel ledPanel;
 		private Models.RJButton btnAgregar;
 		private Models.RJButton btnAtualizarCuota;
+		private System.Windows.Forms.TextBox txtSearch;
+		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
 	}
 }
 

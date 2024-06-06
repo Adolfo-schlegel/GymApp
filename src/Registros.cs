@@ -9,6 +9,7 @@ using ArduinoClient.Tools;
 using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
 using DocumentFormat.OpenXml.EMMA;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace ArduinoClient
 {
@@ -350,6 +351,28 @@ namespace ArduinoClient
 			user.ShowDialog();
 
 			refreshGrid();
+		}
+
+		private void txtSearch_TextChanged(object sender, EventArgs e)
+		{
+			var text = txtSearch.Text;
+			List<UsuarioDB> searched = new List<UsuarioDB>();
+
+			var regex = new Regex(Regex.Escape(text), RegexOptions.IgnoreCase);
+
+			foreach (var user in LstUsers)
+			{
+				var token = user.Nombre.ToLower() +" "+ user.Apellido.ToLower() + " "+ user.Documento +" "+ user.Fecha;
+
+				if (regex.IsMatch(token))
+				{
+					searched.Add(user);
+				}
+			}
+
+			dataGridView2.DataSource = null;
+			dataGridView2.DataSource = searched;
+
 		}
 	}
 }
