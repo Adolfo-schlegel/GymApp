@@ -290,9 +290,9 @@
 			// label13
 			// 
 			this.label13.AutoSize = true;
-			this.label13.BackColor = System.Drawing.SystemColors.ButtonFace;
+			this.label13.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
 			this.label13.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold);
-			this.label13.ForeColor = System.Drawing.Color.MidnightBlue;
+			this.label13.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
 			this.label13.Location = new System.Drawing.Point(20, 9);
 			this.label13.Name = "label13";
 			this.label13.Size = new System.Drawing.Size(247, 20);
@@ -303,7 +303,7 @@
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BackColor = System.Drawing.Color.MidnightBlue;
+			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
 			this.ClientSize = new System.Drawing.Size(296, 378);
 			this.Controls.Add(this.label13);
 			this.Controls.Add(this.lblCodigo);

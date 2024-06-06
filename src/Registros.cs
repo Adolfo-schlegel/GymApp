@@ -41,6 +41,8 @@ namespace ArduinoClient
 		private void Cliente_Load(object sender, EventArgs e)
 		{
 			refreshGrid();
+			btnAtualizarCuota.Visible = false;
+			btnAgregar.Visible = false;
 		}
 		public List<UsuarioDB> getUsers()
 		{
@@ -90,7 +92,7 @@ namespace ArduinoClient
 
 				if (!user.isUpToDate())
 				{
-					row.DefaultCellStyle.BackColor = System.Drawing.Color.Red;
+					row.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(255,121,121);
 					row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
 				}
 			}
@@ -128,8 +130,9 @@ namespace ArduinoClient
 						{
 							lblState.ForeColor = System.Drawing.Color.Green;
 							lblState.Text = "Usuario al dia";
-							label15.BackColor = System.Drawing.Color.Green;
-
+							
+							ledPanel.GradientBottomColor = System.Drawing.Color.Green;
+							ledPanel.GradientTopColor = System.Drawing.Color.Green;
 							openDoor();
 						}
 						else
@@ -137,7 +140,8 @@ namespace ArduinoClient
 							btnAtualizarCuota.Visible = true;
 							lblState.ForeColor = System.Drawing.Color.Red;
 							lblState.Text = "Usuario adeuda";
-							label15.BackColor = System.Drawing.Color.Red;
+							ledPanel.GradientBottomColor = System.Drawing.Color.Red;
+							ledPanel.GradientTopColor = System.Drawing.Color.Red;
 
 							closeDoor();
 						}
@@ -150,7 +154,9 @@ namespace ArduinoClient
 							{
 								btnAtualizarCuota.Visible = false;
 								btnAgregar.Visible = true;
-								label15.BackColor = System.Drawing.Color.Blue;
+								
+								ledPanel.GradientBottomColor = System.Drawing.Color.FromArgb(55, 125, 255);
+								ledPanel.GradientTopColor = System.Drawing.Color.FromArgb(55, 125, 255);
 								lblCodigo.Text = code;
 							}));
 				}
@@ -174,7 +180,8 @@ namespace ArduinoClient
 				lblSexo.Text = "";
 				lblDaysLeft.Text = "";
 				lblState.Text = "";
-				label15.BackColor = System.Drawing.Color.FromArgb(113, 92, 232);
+				ledPanel.GradientBottomColor = System.Drawing.Color.White;
+				ledPanel.GradientTopColor = System.Drawing.Color.White;
 				btnAtualizarCuota.Visible = false;
 			}));
 
@@ -230,16 +237,6 @@ namespace ArduinoClient
 			arduinoManager.serialPort.Dispose();			
 			Environment.Exit(0);
 
-		}
-		private void btnAgregar_Click_1(object sender, EventArgs e)
-		{
-			NewUsuario user = new NewUsuario(arduinoManager);
-
-			user.Code = lblCodigo.Text;
-
-			user.ShowDialog();
-
-			refreshGrid();
 		}
 		private void EvenDataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
@@ -343,10 +340,16 @@ namespace ArduinoClient
 			}
 		
 		}
-		private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+		private void refreshToolStripMenuItem_Click(object sender, EventArgs e) => cleanLabels();
+		private void btnAgregar_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show(arduinoManager.readThread.IsAlive + "Reading is " +arduinoManager.reading);
-			cleanLabels();
+			NewUsuario user = new NewUsuario(arduinoManager);
+
+			user.Code = lblCodigo.Text;
+
+			user.ShowDialog();
+
+			refreshGrid();
 		}
 	}
 }
