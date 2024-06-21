@@ -23,6 +23,14 @@ namespace ArduinoClient
 				return output.ToList();
 			}
 		}
+		public static void LogDateAccessUser(int userId, string logLine)
+		{
+			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+			{
+				string query = "UPDATE Usuario SET Log = IFNULL(Log, '') || @LogLine || char(10) WHERE Id = @UserId";
+				cnn.Execute(query, new { LogLine = logLine, UserId = userId });
+			}
+		}
 		public static void SaveUser(UsuarioDB user)
 		{
 			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))

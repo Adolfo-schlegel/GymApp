@@ -20,6 +20,7 @@ namespace ArduinoClient.Models
 		public long Monto { get; set; }
 		public string Correo { get; set; }
 		public int EstadoCorreo { get; set; }
+		public string Log { get; set; }
 
 		public bool isUpToDate() => DateTime.Today.Subtract(DateTime.Parse(Fecha)).TotalDays <= 30;
 

@@ -83,6 +83,7 @@
 			this.agregarUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.eliminarUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.btnGroupDeudores = new ArduinoClient.Models.RJButton();
 			this.fondoPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.usuarioDBBindingSource)).BeginInit();
@@ -98,6 +99,7 @@
 			// 
 			this.fondoPanel.BackColor = System.Drawing.Color.White;
 			this.fondoPanel.BorderRadius = 10;
+			this.fondoPanel.Controls.Add(this.btnGroupDeudores);
 			this.fondoPanel.Controls.Add(this.txtSearch);
 			this.fondoPanel.Controls.Add(this.btnAtualizarCuota);
 			this.fondoPanel.Controls.Add(this.btnAgregar);
@@ -276,10 +278,12 @@
 			this.dataGridView2.RowHeadersWidth = 25;
 			this.dataGridView2.RowTemplate.DividerHeight = 2;
 			this.dataGridView2.RowTemplate.Height = 25;
+			this.dataGridView2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
 			this.dataGridView2.Size = new System.Drawing.Size(932, 395);
 			this.dataGridView2.TabIndex = 9;
 			this.dataGridView2.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.EvenDataGridView2_CellClick);
 			this.dataGridView2.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.EvenModifyUser_DoubleClick);
+			this.dataGridView2.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView2_ColumnHeaderMouseClick);
 			// 
 			// idDataGridViewTextBoxColumn
 			// 
@@ -711,6 +715,26 @@
 			this.refreshToolStripMenuItem.Text = "Refresh";
 			this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
 			// 
+			// btnGroupDeudores
+			// 
+			this.btnGroupDeudores.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+			this.btnGroupDeudores.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+			this.btnGroupDeudores.BorderColor = System.Drawing.Color.PaleVioletRed;
+			this.btnGroupDeudores.BorderRadius = 10;
+			this.btnGroupDeudores.BorderSize = 0;
+			this.btnGroupDeudores.FlatAppearance.BorderSize = 0;
+			this.btnGroupDeudores.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+			this.btnGroupDeudores.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.btnGroupDeudores.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+			this.btnGroupDeudores.Location = new System.Drawing.Point(826, 372);
+			this.btnGroupDeudores.Name = "btnGroupDeudores";
+			this.btnGroupDeudores.Size = new System.Drawing.Size(92, 26);
+			this.btnGroupDeudores.TabIndex = 40;
+			this.btnGroupDeudores.Text = "Deudores";
+			this.btnGroupDeudores.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+			this.btnGroupDeudores.UseVisualStyleBackColor = false;
+			this.btnGroupDeudores.Click += new System.EventHandler(this.btnGroupDeudores_Click);
+			// 
 			// Cliente
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -795,6 +819,7 @@
 		private Models.RJButton btnAtualizarCuota;
 		private System.Windows.Forms.TextBox txtSearch;
 		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+		private Models.RJButton btnGroupDeudores;
 	}
 }
 

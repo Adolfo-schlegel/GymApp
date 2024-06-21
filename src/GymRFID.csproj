@@ -142,6 +142,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\SortableBindingList.cs" />
     <Compile Include="Models\ArtanPanel.cs">
       <SubType>Component</SubType>
     </Compile>

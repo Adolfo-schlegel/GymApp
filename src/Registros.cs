@@ -10,13 +10,15 @@ using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
 using DocumentFormat.OpenXml.EMMA;
 using System.IO;
 using System.Text.RegularExpressions;
+using DocumentFormat.OpenXml.Spreadsheet;
+using System.ComponentModel;
+using ArduinoClient.Extensions;
 
 namespace ArduinoClient
 {
 	public partial class Cliente : Form
 	{
 		private int ClickedId;
-
 		private Thread Hilo;		
 		private List<UsuarioDB> LstUsers;
 		private UsuarioDB ScannedUser;
@@ -25,8 +27,10 @@ namespace ArduinoClient
 		public Cliente(ArduinoManager arduinoManager)
 		{			
 			Init();
+			dataGridView2.CellFormatting += dataGridView2_CellFormatting;
 			this.arduinoManager = arduinoManager;
 		}
+		private void dataGridView2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) => printUserNotUpdated();
 		private void Init()
 		{
 			InitializeComponent();
@@ -37,8 +41,6 @@ namespace ArduinoClient
 			Hilo.Name = "AccessDoorProcess";
 			Hilo.Start();
 		}
-
-
 		private void Cliente_Load(object sender, EventArgs e)
 		{
 			refreshGrid();
@@ -76,11 +78,16 @@ namespace ArduinoClient
 		{
 			LstUsers = getUsers();
 
+			SortableBindingList<UsuarioDB> bindingList = new SortableBindingList<UsuarioDB>(LstUsers);
+
+			bindingList.SetStatusFunc(item => item.isUpToDate());
+
+
 			dataGridView2.Invoke(new MethodInvoker(
 				delegate
 				{
 					dataGridView2.DataSource = null;
-					dataGridView2.DataSource = LstUsers;
+					dataGridView2.DataSource = bindingList;
 				}));
 
 			printUserNotUpdated();
@@ -117,50 +124,56 @@ namespace ArduinoClient
 		private void showUserInfo(string code)
 		{
 			cleanLabels();
-			
-			if (isUserExist(code))
-				{
-					ScannedUser = userByCode(code);
 
-					lblId.Invoke(new MethodInvoker(
+			if (!isUserExist(code))
+			{
+				lblCodigo.Invoke(new MethodInvoker(
 					delegate
 					{
-						setUserInfo();
+						btnAtualizarCuota.Visible = false;
+						btnAgregar.Visible = true;
 
-						if (ScannedUser.isUpToDate())
-						{
-							lblState.ForeColor = System.Drawing.Color.Green;
-							lblState.Text = "Usuario al dia";
-							
-							ledPanel.GradientBottomColor = System.Drawing.Color.Green;
-							ledPanel.GradientTopColor = System.Drawing.Color.Green;
-							openDoor();
-						}
-						else
-						{
-							btnAtualizarCuota.Visible = true;
-							lblState.ForeColor = System.Drawing.Color.Red;
-							lblState.Text = "Usuario adeuda";
-							ledPanel.GradientBottomColor = System.Drawing.Color.Red;
-							ledPanel.GradientTopColor = System.Drawing.Color.Red;
+						ledPanel.GradientBottomColor = System.Drawing.Color.FromArgb(55, 125, 255);
+						ledPanel.GradientTopColor = System.Drawing.Color.FromArgb(55, 125, 255);
+						lblCodigo.Text = code;
+					}));
+			}
 
-							closeDoor();
-						}
-					}));		
-				}
-			else
+			if (isUserExist(code))
+			{
+				ScannedUser = userByCode(code);
+				lblId.Invoke(new MethodInvoker(
+				delegate
 				{
-					lblCodigo.Invoke(new MethodInvoker(
-							delegate
-							{
-								btnAtualizarCuota.Visible = false;
-								btnAgregar.Visible = true;
-								
-								ledPanel.GradientBottomColor = System.Drawing.Color.FromArgb(55, 125, 255);
-								ledPanel.GradientTopColor = System.Drawing.Color.FromArgb(55, 125, 255);
-								lblCodigo.Text = code;
-							}));
-				}
+					setUserInfo();
+
+					if (ScannedUser.isUpToDate())
+					{
+						lblState.ForeColor = System.Drawing.Color.Green;
+						lblState.Text = "Usuario al dia";
+						ledPanel.GradientBottomColor = System.Drawing.Color.Green;
+						ledPanel.GradientTopColor = System.Drawing.Color.Green;
+
+						SqliteDataAccess.LogDateAccessUser(ScannedUser.Id, 
+							$"{DateTime.Now.ToString("yy/MM/dd - HH:mm")} - OK");
+
+						openDoor();
+					}
+					else
+					{
+						btnAtualizarCuota.Visible = true;
+						lblState.ForeColor = System.Drawing.Color.Red;
+						lblState.Text = "Usuario adeuda";
+						ledPanel.GradientBottomColor = System.Drawing.Color.Red;
+						ledPanel.GradientTopColor = System.Drawing.Color.Red;
+
+						SqliteDataAccess.LogDateAccessUser(ScannedUser.Id,
+							$"{DateTime.Now.ToString("yy/MM/dd - HH:mm")} - Error");
+
+						closeDoor();
+					}
+				}));		
+			}
 
 			refreshGrid();
 		}
@@ -222,7 +235,7 @@ namespace ArduinoClient
 
 				ModifyUsuario userForm = new ModifyUsuario(arduinoManager);
 
-				userForm.fillTextBoxUser(user.Codigo, user.Id, user.Nombre, user.Apellido, user.Documento.ToString(), user.Sexo,user.Celular.ToString(), user.MedioPago, user.Fecha.ToString(), user.Monto.ToString(), user.Correo);
+				userForm.fillTextBoxUser(user.Codigo, user.Id, user.Nombre, user.Apellido, user.Documento.ToString(), user.Sexo,user.Celular.ToString(), user.MedioPago, user.Fecha.ToString(), user.Monto.ToString(), user.Correo, user.Log);
 
 				userForm.ShowDialog();
 
@@ -341,7 +354,11 @@ namespace ArduinoClient
 			}
 		
 		}
-		private void refreshToolStripMenuItem_Click(object sender, EventArgs e) => cleanLabels();
+		private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			refreshGrid();
+			cleanLabels();
+		}
 		private void btnAgregar_Click(object sender, EventArgs e)
 		{
 			NewUsuario user = new NewUsuario(arduinoManager);
@@ -352,7 +369,6 @@ namespace ArduinoClient
 
 			refreshGrid();
 		}
-
 		private void txtSearch_TextChanged(object sender, EventArgs e)
 		{
 			var text = txtSearch.Text;
@@ -373,6 +389,31 @@ namespace ArduinoClient
 			dataGridView2.DataSource = null;
 			dataGridView2.DataSource = searched;
 
+		}
+		private void dataGridView2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+		{
+			var columnIndex = e.ColumnIndex;
+			var column = dataGridView2.Columns[columnIndex];
+
+			PropertyDescriptor propDesc = TypeDescriptor.GetProperties(typeof(UsuarioDB))[column.DataPropertyName];
+
+			ListSortDirection direction = ListSortDirection.Descending;
+			if (dataGridView2.SortOrder == SortOrder.Descending)
+			{
+				direction = ListSortDirection.Ascending;
+			}
+
+
+			((IBindingList)dataGridView2.DataSource).ApplySort(propDesc, direction);
+
+		}
+		private void btnGroupDeudores_Click(object sender, EventArgs e)
+		{
+			SortableBindingList<UsuarioDB> bindingList = (SortableBindingList<UsuarioDB>)dataGridView2.DataSource;
+
+			// Sort by status first, then by the "Fecha" column (you can change this to any column you prefer)
+			PropertyDescriptor propDesc = TypeDescriptor.GetProperties(typeof(UsuarioDB))["Fecha"];
+			((IBindingList)bindingList).ApplySort(propDesc, ListSortDirection.Ascending);
 		}
 	}
 }

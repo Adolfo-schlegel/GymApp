@@ -40,7 +40,7 @@ namespace ArduinoClient.Tools
 				worksheet.Cell(row, 9).Value = item.MedioPago;
 				worksheet.Cell(row, 10).Value = item.Correo;
 				worksheet.Cell(row, 11).Value = item.Codigo;
-
+				//worksheet.Cell(row, 12).Value = item.Log;
 
 				if (!item.isUpToDate())
 				{
@@ -77,7 +77,7 @@ namespace ArduinoClient.Tools
 			worksheet.Cell(1, 9).Value = "Medio";
 			worksheet.Cell(1, 10).Value = "Correo";
 			worksheet.Cell(1, 11).Value = "Codigo";
-
+			//worksheet.Cell(1, 11).Value = "Log";
 			PrintRowInblue(1);
 		}
 

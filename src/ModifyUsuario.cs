@@ -23,7 +23,7 @@ namespace ArduinoClient
 			this.arduinoManager = arduinoManager;
 
 			hilo = new Thread(listenSerial);
-			hilo.Start();
+			hilo.Start();			
 		}
 		
 		private void btnGuardarUsuario_Click(object sender, EventArgs e)
@@ -57,7 +57,7 @@ namespace ArduinoClient
 				Correo = txtAddres.Text + "@" + txtCorreo.Text
 			};
 		}
-		public void fillTextBoxUser(string numero, long id, string nombre, string apellido, string documento, string sexo, string celular, string medioPago, string fecha, string monto, string correo)
+		public void fillTextBoxUser(string numero, long id, string nombre, string apellido, string documento, string sexo, string celular, string medioPago, string fecha, string monto, string correo, string log)
 		{
 			lblID.Text = id.ToString();
 			lblCodigo.Text = numero;
@@ -69,8 +69,10 @@ namespace ArduinoClient
 			cbMedio.Text = medioPago;
 			dateTimePicker1.Text = fecha;
 			txtMonto.Text = monto;
+			labelNombre.Text = nombre;
+			txtRegistro.Text = log;
 
-			if(correo.Contains("@"))
+			if (correo.Contains("@"))
 			{
 				txtAddres.Text = correo.Split('@')[0];
 				txtCorreo.Text = correo.Split('@')[1];
@@ -79,7 +81,6 @@ namespace ArduinoClient
 				txtAddres.Text = correo;
 
 		}
-
 		private void listenSerial()
 		{
 			while (true)
@@ -99,7 +100,6 @@ namespace ArduinoClient
 				}
 			}
 		}
-
 		private void ModifyUsuario_FormClosed(object sender, FormClosedEventArgs e)
 		{
 			hilo.Suspend();
