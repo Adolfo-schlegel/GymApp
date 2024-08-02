@@ -1,7 +1,13 @@
 ﻿using ArduinoClient.Tools;
+using ArduinoClient.WorkingService;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
+using System.Configuration;
 using System.IO;
+using System.IO.Ports;
 using System.Windows.Forms;
+
 
 namespace ArduinoClient
 {
@@ -14,16 +20,34 @@ namespace ArduinoClient
 		static void Main()
 		{
 			// Obtener la instancia de ArduinoManager
-			ArduinoManager arduinoManager = ArduinoManager.GetInstance();
+			//ArduinoManager arduinoManager = ArduinoManager.GetInstance();
+
+			var host = CreateHostBuilder().Build();
+
+			var arduinoManager = host.Services.GetRequiredService<ArduinoManager>();
 
 			//Empieza a leer datos del puerto Serial del arduino
 			arduinoManager.StartReading();
 
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Cliente(arduinoManager));
-
-			
+			Application.Run(new Cliente(arduinoManager));			
 		}
+
+		private static IHostBuilder CreateHostBuilder() =>
+		Host.CreateDefaultBuilder()
+		.ConfigureServices((hostContext, services) =>
+		{
+			services.AddSingleton(provider => new SerialPort
+			{
+				PortName = ConfigurationManager.AppSettings["PuertoCOM"],
+				BaudRate = 9600
+			});
+
+			services.AddSingleton<ArduinoManager>();
+			services.AddHostedService<DailyWorker>();
+		});
+
 	}
 }
+
