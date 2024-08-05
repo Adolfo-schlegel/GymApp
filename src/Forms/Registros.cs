@@ -56,7 +56,7 @@ namespace ArduinoClient
 		{
 			try
 			{
-				arduinoManager.serialPort.Write("E");
+				arduinoManager._serialPort.Write("E");
 			}
 			catch (Exception ex)
 			{
@@ -67,7 +67,7 @@ namespace ArduinoClient
 		{
 			try
 			{
-				arduinoManager.serialPort.Write("X");
+				arduinoManager._serialPort.Write("X");
 			}
 			catch (Exception ex)
 			{
@@ -246,9 +246,9 @@ namespace ArduinoClient
 		}
 		private void EventCliente_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (arduinoManager.serialPort.IsOpen) arduinoManager.serialPort.Close();
+			if (arduinoManager._serialPort.IsOpen) arduinoManager._serialPort.Close();
 			arduinoManager.StopReading();
-			arduinoManager.serialPort.Dispose();			
+			arduinoManager._serialPort.Dispose();			
 			Environment.Exit(0);
 
 		}

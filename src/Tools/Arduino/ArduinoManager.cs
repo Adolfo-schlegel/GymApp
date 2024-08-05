@@ -10,19 +10,20 @@ namespace ArduinoClient.Tools
 {
 	public class ArduinoManager
 	{
-		private static ArduinoManager instance;
-		public SerialPort serialPort;
-		public Thread readThread;
-		public bool reading = false;
-		private Queue<string> receivedDataQueue = new Queue<string>();
-		private object queueLock = new object();
+			
 		private static ManualResetEvent suspendEvent = new ManualResetEvent(false);
 		private static ManualResetEvent resumeEvent = new ManualResetEvent(false);
+		private Queue<string> receivedDataQueue = new Queue<string>();
+		public SerialPort _serialPort;
+		public Thread _readThread;
+		
 		private object threadLock = new object();
+		private object queueLock = new object();
+		public bool reading = false;
 
 		public ArduinoManager(SerialPort serialPort)
 		{
-			this.serialPort = serialPort;
+			this._serialPort = serialPort;
 			SystemEvents.PowerModeChanged += OnPowerModeChanged;
 			InitArduino();
 			InitThread();			
@@ -46,7 +47,7 @@ namespace ArduinoClient.Tools
 
 		private void InitThread()
 		{
-			readThread = new Thread(ReadArduinoData)
+			_readThread = new Thread(ReadArduinoData)
 			{
 				Name = "ReaderArduinoProcess",
 				IsBackground = true // Hilo en segundo plano
@@ -56,16 +57,9 @@ namespace ArduinoClient.Tools
 		{
 			try
 			{
-				//Se movio esta dependencia al contructor para ser inyectada desde el contenedor de dependencias en program.cs
-				//serialPort = new SerialPort
-				//{
-				//	PortName = ConfigurationManager.AppSettings["PuertoCOM"],
-				//	BaudRate = 9600
-				//};
-
-				if (!serialPort.IsOpen)
+				if (!_serialPort.IsOpen)
 				{
-					serialPort.Open();
+					_serialPort.Open();
 					Thread.Sleep(1000);
 				}
 			}
@@ -82,32 +76,6 @@ namespace ArduinoClient.Tools
 				MessageBox.Show("Error al inicializar el puerto Arduino: " + ex.Message);
 			}
 		}
-		//public static ArduinoManager GetInstance()
-		//{
-		//	if (instance == null)
-		//	{
-		//		instance = new ArduinoManager();
-		//	}
-		//	return instance;
-		//}
-		//public SerialPort GetArduino()
-		//{
-		//	return serialPort;
-		//}
-		//public void StartReading()
-		//{
-		//	if (!reading)
-		//	{
-		//		reading = true;
-		//		readThread.Start();
-		//
-		//		if (readThread == null || !readThread.IsAlive)
-		//		{
-		//			InitThread();
-		//			readThread.Start();
-		//		}
-		//	}
-		//}
 		public void StartReading()
 		{
 			lock (threadLock)
@@ -115,10 +83,10 @@ namespace ArduinoClient.Tools
 				if (!reading)
 				{
 					reading = true;
-					if (readThread == null || !readThread.IsAlive)
+					if (_readThread == null || !_readThread.IsAlive)
 					{
 						InitThread(); // Crea un nuevo hilo antes de iniciarlo
-						readThread.Start();
+						_readThread.Start();
 					}
 				}
 			}
@@ -127,9 +95,9 @@ namespace ArduinoClient.Tools
 		{
 			try
 			{
-				if (serialPort != null && serialPort.IsOpen)
+				if (_serialPort != null && _serialPort.IsOpen)
 				{
-					serialPort.Close();
+					_serialPort.Close();
 					Console.WriteLine("Puerto Arduino cerrado correctamente.");
 				}
 			}
@@ -146,7 +114,7 @@ namespace ArduinoClient.Tools
 			{
 				try
 				{
-					serialPort.Open();
+					_serialPort.Open();
 					Console.WriteLine("Puerto Arduino reabierto correctamente.");
 					StartReading();
 					suspendEvent.Reset(); // Reanuda el hilo reiniciando el evento
@@ -168,11 +136,11 @@ namespace ArduinoClient.Tools
 		public void StopReading()
 		{
 			reading = false;
-			if (readThread != null && readThread.IsAlive)
+			if (_readThread != null && _readThread.IsAlive)
 			{
-				readThread.Join();
+				_readThread.Join();
 				Console.WriteLine("Hilo de lectura detenido correctamente.");
-				readThread = null; // Asegúrate de que el hilo se puede recrear
+				_readThread = null; // Asegúrate de que el hilo se puede recrear
 			}
 		}
 		private void ReadArduinoData()
@@ -190,10 +158,10 @@ namespace ArduinoClient.Tools
 
 					if (!reading) break;//Si no esta leyendo rompe el bucle
 
-					if (serialPort != null && serialPort.IsOpen && serialPort.BytesToRead > 0)
+					if (_serialPort != null && _serialPort.IsOpen && _serialPort.BytesToRead > 0)
 					{
 						Console.WriteLine("Leyendo datos desde el Arduino...");
-						string data = serialPort.ReadLine();
+						string data = _serialPort.ReadLine();
 
 						var line = data.Contains("Card UID:") ? data.Trim() : null;
 
