@@ -1,4 +1,5 @@
 ﻿using ArduinoClient.Tools.Log;
+using DocumentFormat.OpenXml.Bibliography;
 using System;
 using System.IO;
 
@@ -6,42 +7,32 @@ namespace ArduinoClient.Tools
 {
 	public class FileLogger : ILogger
 	{
-		private readonly string _logDirectory;
-		private readonly string _logFileName;
+		private string _logFilePath;
+		private FileStream _fileStream;
 
 		public FileLogger(string logDirectory, string logFileName)
 		{
-			logFileName += GetLogFileName();
+			if(!Directory.Exists(logDirectory))
+				Directory.CreateDirectory(logDirectory);
 
-			_logDirectory = logDirectory;
-			_logFileName = logFileName;
+			_logFilePath = logDirectory +@"\"+ logFileName +"-"+ DateTime.Now.ToString("yyyy") + ".log";
 
-			Directory.CreateDirectory(logDirectory); 
+			_fileStream = new FileStream(_logFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 		}
-		private string GetLogFileName()
+
+		public void Log(string text)
 		{
-			return DateTime.Now.ToString("yyyy") + ".log";
-		}
-		public void Log(string headers ,string bodyContent)
-		{
-			
-			var logFilePath = _logDirectory + _logFileName;
+			var isEmpty = !File.Exists(_logFilePath) || new FileInfo(_logFilePath).Length == 0;		
 
-			// Check if the file is empty
-			var isEmpty = !File.Exists(logFilePath) || new FileInfo(logFilePath).Length == 0;
-
-			FileStream fileStream = new FileStream(logFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-
-			// Write the log message to the log file
-			using (var writer = new StreamWriter(fileStream))
+			using (var writer = new StreamWriter(_fileStream))
 			{
 				// If the file is empty, write the headers first
 				if (isEmpty)
 				{
-					writer.WriteLine(headers);
+					writer.WriteLine(DateTime.Today);
 				}
 
-				writer.WriteLine(bodyContent);
+				writer.WriteLine(text);
 			}
 		}
 	}

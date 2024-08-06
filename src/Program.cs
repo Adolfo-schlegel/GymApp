@@ -33,18 +33,35 @@ namespace ArduinoClient
 		private static IHostBuilder CreateHostBuilder() =>
 		Host.CreateDefaultBuilder()
 		.ConfigureServices((hostContext, services) =>
-		{			
+		{
+			services.AddSingleton<ILogger, FileLogger>(provider =>
+			{
+				return new FileLogger(@"C:\TEMP\logs", "LogFile");
+			});
+			
 			services.AddSingleton(provider => new SerialPort
 			{
 				PortName = ConfigurationManager.AppSettings["PuertoCOM"],
 				BaudRate = 9600
 			});
-			services.AddSingleton<ILogger, FileLogger>(provider => 
-			{
-				return new FileLogger(@"C:\TEMP\logs\", "LogFile");
-			});
+			
 			services.AddSingleton<ArduinoManager>();
-			services.AddSingleton<DailyWorker>();
+			
+			services.AddSingleton<IReportSender, ReportSender>();
+			
+			services.AddSingleton<DailyWorker>(provider =>
+			{
+				var logger = provider.GetRequiredService<ILogger>();
+				var reportSender = provider.GetRequiredService<IReportSender>();
+
+				var worker = new DailyWorker(logger, reportSender)
+				{
+					//ExecutionTime = TimeSpan.FromHours(23), // Ejemplo de configuración
+					ExecutionInterval = TimeSpan.FromSeconds(2) // Ejemplo de configuración
+				};
+
+				return worker;
+			});
 		});
 
 	}

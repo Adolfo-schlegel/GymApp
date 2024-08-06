@@ -9,51 +9,127 @@ namespace ArduinoClient.WorkingService
 {
 	public class DailyWorker
 	{
-		private Tools.Log.ILogger _logger;
-		private IReportSender _reportSender;
-		private Thread _thread;
-		private readonly CancellationTokenSource _cancellationTokenSource;
+		private readonly Tools.Log.ILogger _logger;
+		private readonly IReportSender _reportSender;
+		private Timer _timer;
+		private TimeSpan? _executionTime; // Hora específica de ejecución (opcional)
+		private TimeSpan? _executionInterval; // Intervalo de ejecución (opcional)
+		private DateTime _lastExecutionTime; // Última hora de ejecución
+
+		public TimeSpan? ExecutionTime
+		{
+			get => _executionTime;
+			set
+			{
+				_executionTime = value;
+				ResetTimer();
+			}
+		}
+		public TimeSpan? ExecutionInterval
+		{
+			get => _executionInterval;
+			set
+			{
+				_executionInterval = value;
+				ResetTimer();
+			}
+		}
+
 		public DailyWorker(Tools.Log.ILogger logger, IReportSender reportSender)
 		{
-			_cancellationTokenSource = new CancellationTokenSource();
 			_logger = logger;
 			_reportSender = reportSender;
-			InitThread();
+			_lastExecutionTime = DateTime.MinValue;
+			StartBackgroundThread();
 		}
-		public void InitThread()
+
+		private void StartBackgroundThread()
 		{
-			_thread = new Thread(() => SendingProcess(_cancellationTokenSource.Token))
+			var thread = new Thread(() =>
 			{
-				Name = "SendingProcess",
+				_timer = new Timer(CheckTimeAndExecute, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+			})
+			{
+				Name = "DailyWorkerThread",
 				IsBackground = true
 			};
-			_thread.Start();
+			thread.Start();
 		}
-		private void SendingProcess(CancellationToken cancellationToken)
+
+		private void CheckTimeAndExecute(object state)
 		{
-			_logger.Log("Worker", "Worker starting at: " + DateTimeOffset.Now);
 			try
 			{
-				while (!cancellationToken.IsCancellationRequested)
+				var currentTime = DateTime.Now;
+
+				//Ejecuta los trabajos por Hora indicada
+				if (_executionTime.HasValue)
 				{
-					//var result = _reportSender.SendToDisk();
-					_logger.Log("Resultado", "Hola");
-					Thread.Sleep(1000); // Sleep for 1 second before the next iteration
+					var executionDateTime = currentTime.Date + _executionTime.Value;
+					if (currentTime >= executionDateTime && currentTime - _lastExecutionTime >= TimeSpan.FromDays(1))
+					{
+						ExecuteJobs();
+						_lastExecutionTime = currentTime;
+					}
+				}
+
+				//Ejecuta los trabajos por intervalo indicado
+				if (_executionInterval.HasValue)
+				{
+					if (currentTime - _lastExecutionTime >= _executionInterval.Value)
+					{
+						ExecuteJobs();
+						_lastExecutionTime = currentTime;
+					}
 				}
 			}
 			catch (Exception ex)
 			{
-				_logger.Log("Worker", "Worker encountered an error: " + ex.Message);
+				_logger.Log("Error in CheckTimeAndExecute: " + ex.Message);
 			}
-			finally
+		}
+		private void ExecuteJobs()
+		{
+			try
 			{
-				_logger.Log("Worker", "Worker stopping at: " + DateTimeOffset.Now);
+				_logger.Log("Executing task at: " + DateTime.Now);
+
+				var diskResult = _reportSender.SendToDisk();
+				var emailResult = _reportSender.SendEmailReport();
+				var googleDriveResult = _reportSender.SendGoogleDriveReport();
+
+				_logger.Log("SendToDisk result -> " + diskResult);
+				_logger.Log("SendEmailReport result -> " + emailResult);
+				_logger.Log("SendGoogleDriveReport result -> " + googleDriveResult);
+
+				_logger.Log("End task");
+			}
+			catch (Exception ex)
+			{
+				_logger.Log("Error in ExecuteJobs: " + ex.Message);
+			}
+		}
+		private void ResetTimer()
+		{
+			try
+			{
+				_timer?.Change(TimeSpan.Zero, TimeSpan.FromMinutes(1)); // Reiniciar el temporizador
+			}
+			catch (Exception ex)
+			{
+				_logger.Log("Error in ResetTimer: " + ex.Message);
 			}
 		}
 		public void Stop()
 		{
-			_cancellationTokenSource.Cancel();
-			_thread.Join(); 
+			try
+			{
+				_timer?.Change(Timeout.Infinite, 0); // Detiene el temporizador
+			}
+			catch (Exception ex)
+			{
+				_logger.Log("Error in Stop: " + ex.Message);
+			}
 		}
 	}
 }

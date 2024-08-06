@@ -9,6 +9,6 @@ namespace ArduinoClient.Tools.Log
 {
 	public interface ILogger
 	{
-		void Log(string headers, string bodyContent);
+		void Log(string text);
 	}
 }

@@ -304,7 +304,9 @@
     <EmbeddedResource Include="Forms\NewUsuario.resx">
       <DependentUpon>NewUsuario.cs</DependentUpon>
     </EmbeddedResource>
-    <Content Include="DataBase.db" />
+    <Content Include="DataBase.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\ArduinoClient.Models.User.datasource" />
     <None Include="Properties\DataSources\ArduinoClient.Models.UsuarioDB.datasource" />
