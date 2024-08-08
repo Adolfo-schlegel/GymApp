@@ -28,7 +28,6 @@ namespace ArduinoClient.WorkingService
 			
 			if (entries.Count > 0)
 			{
-				_logger.Log("");
 				var message = $"";
 				entries.ForEach(x =>
 				{

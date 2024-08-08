@@ -34,6 +34,7 @@ namespace ArduinoClient
 			var dailyWorker = host.Services.GetRequiredService<DailyWorker>();		
 			dailyWorker.ExecutionTime = TimeSpan.FromHours(23);
 			//dailyWorker.ExecutionInterval = TimeSpan.FromMinutes(1); 
+			
 			dailyWorker.StartWorking();
 
 			Application.EnableVisualStyles();
