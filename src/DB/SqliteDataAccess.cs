@@ -97,5 +97,14 @@ namespace ArduinoClient
 				return result;
 			}
 		}
+		public void ClearLogs()
+		{
+			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+			{
+				cnn.Open();
+				string query = "UPDATE Usuario SET Log = ''";
+				cnn.Execute(query);
+			}
+		}
 	}
 }

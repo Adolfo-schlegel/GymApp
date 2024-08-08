@@ -277,6 +277,7 @@
       <DependentUpon>NewUsuario.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\Arduino\ArduinoManager.cs" />
+    <Compile Include="Tools\Email\EmailSender.cs" />
     <Compile Include="Tools\Excel\ExcelManager.cs" />
     <Compile Include="Tools\Log\FileLogger.cs" />
     <Compile Include="Tools\Log\IFileLogger.cs" />

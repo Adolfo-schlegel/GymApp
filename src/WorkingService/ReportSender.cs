@@ -1,4 +1,5 @@
 ﻿using ArduinoClient.DB;
+using ArduinoClient.Tools.Email;
 using ArduinoClient.Tools.Log;
 using System;
 using System.Collections.Generic;
@@ -12,21 +13,35 @@ namespace ArduinoClient.WorkingService
 	{
 		IFileLogger _logger;
 		ISqliteDataAccess _sqliteDataAccess;
-		public ReportSender(IEnumerable<IFileLogger> logger, ISqliteDataAccess sqliteDataAccess) 
+		IEmailSender _emailSender;
+		public ReportSender(IEnumerable<IFileLogger> logger, ISqliteDataAccess sqliteDataAccess, IEmailSender emailSender) 
 		{
+			_emailSender = emailSender;
 			_sqliteDataAccess = sqliteDataAccess;
 			_logger = logger.Where(x => x.TypeLogger == TypeLogger.ReportSender).First();
 		}
 		public string SendEmailReport()
 		{
-			_logger.Log("");
-			
+			string result = "OK";
+
 			var entries = _sqliteDataAccess.GetLogEntries();
 			
-			entries.ForEach(x=> _logger.Log(x));
+			if (entries.Count > 0)
+			{
+				_logger.Log("");
+				var message = $"";
+				entries.ForEach(x =>
+				{
+					_logger.Log(x);
+					message += "\n" + x;
+				});
 
-			//Email.Send(pablo.gym@gmail.com, entries)
-			return "OK";
+				_sqliteDataAccess.ClearLogs();
+
+				result = _emailSender.SendEmail("crosspablo23@gmail.com", "adolfo.77@outlook.es", $"Ingresos de hoy {DateTime.Today}", message);
+			}
+
+			return result;
 		}
 
 		public string SendGoogleDriveReport()

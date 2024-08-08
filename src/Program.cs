@@ -1,5 +1,6 @@
 ﻿using ArduinoClient.DB;
 using ArduinoClient.Tools;
+using ArduinoClient.Tools.Email;
 using ArduinoClient.Tools.Log;
 using ArduinoClient.WorkingService;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,8 +32,8 @@ namespace ArduinoClient
 			arduinoManager.StartReading();
 
 			var dailyWorker = host.Services.GetRequiredService<DailyWorker>();		
-			//dailyWorker.ExecutionTime = TimeSpan.FromHours(23);
-			dailyWorker.ExecutionInterval = TimeSpan.FromMinutes(1); 
+			dailyWorker.ExecutionTime = TimeSpan.FromHours(23);
+			//dailyWorker.ExecutionInterval = TimeSpan.FromMinutes(1); 
 			dailyWorker.StartWorking();
 
 			Application.EnableVisualStyles();
@@ -47,7 +48,16 @@ namespace ArduinoClient
 			services.AddSingleton<ISqliteDataAccess, SqliteDataAccess>();
 
 			services.AddSingleton<IReportSender, ReportSender>();
-
+		
+			services.AddTransient<IEmailSender>(provider =>
+				new EmailSender(
+					smtpHost: "smtp.gmail.com",
+					smtpPort: 587,
+					smtpUser: "crosspablo23@gmail.com", 
+					smtpPass: "fghmesdmyzgpqefv", 
+					enableSsl: true
+				)
+			);
 			services.AddSingleton<IFileLogger, FileLogger>(provider => 
 			new FileLogger(@"C:\TEMP\logs", "DailyWorkerLogFile") { TypeLogger = TypeLogger.DailyWorker });
 

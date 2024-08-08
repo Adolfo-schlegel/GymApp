@@ -16,5 +16,6 @@ namespace ArduinoClient.DB
 		void UpdateQuota(UsuarioDB user);
 		void DeleteUser(int id);
 		List<string> GetLogEntries();
+		void ClearLogs();
 	}
 }
