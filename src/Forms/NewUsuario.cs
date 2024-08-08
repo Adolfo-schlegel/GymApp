@@ -1,4 +1,5 @@
-﻿using ArduinoClient.Models;
+﻿using ArduinoClient.DB;
+using ArduinoClient.Models;
 using ArduinoClient.Tools;
 using System;
 using System.Threading;
@@ -10,11 +11,12 @@ namespace ArduinoClient
 		private Thread hilo;
 		public string Code { get; set; }
 		private ArduinoManager arduinoManager;
-		public NewUsuario(ArduinoManager arduinoManager)
+		private ISqliteDataAccess _sqliteDataAccess;
+		public NewUsuario(ArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess)
 		{			
 			InitializeComponent();
 			this.arduinoManager = arduinoManager;
-
+			_sqliteDataAccess = sqliteDataAccess;
 			hilo = new Thread(listenSerial);
 			hilo.Name = "UserIdProcess";
 			hilo.Start();
@@ -29,7 +31,7 @@ namespace ArduinoClient
 		{
 			try
 			{
-				SqliteDataAccess.SaveUser(getUserFromTextbox());
+				_sqliteDataAccess.SaveUser(getUserFromTextbox());
 				MessageBox.Show("Usuario agregado: " + txtNombre.Text);
 			}
 			catch(Exception ex)

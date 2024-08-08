@@ -246,6 +246,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DB\ISqliteDataAccess.cs" />
     <Compile Include="Extensions\SortableBindingList.cs" />
     <Compile Include="Models\ArtanPanel.cs">
       <SubType>Component</SubType>
@@ -277,9 +278,9 @@
     </Compile>
     <Compile Include="Tools\Arduino\ArduinoManager.cs" />
     <Compile Include="Tools\Excel\ExcelManager.cs" />
-    <Compile Include="Tools\Arduino\SerialPortManager.cs" />
     <Compile Include="Tools\Log\FileLogger.cs" />
-    <Compile Include="Tools\Log\ILogger.cs" />
+    <Compile Include="Tools\Log\IFileLogger.cs" />
+    <Compile Include="Tools\Log\TypeLogger.cs" />
     <Compile Include="WorkingService\IReportSender.cs" />
     <Compile Include="WorkingService\ReportSender.cs" />
     <Compile Include="WorkingService\DailyWorker.cs" />

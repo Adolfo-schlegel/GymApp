@@ -1,4 +1,5 @@
-﻿using ArduinoClient.Models;
+﻿using ArduinoClient.DB;
+using ArduinoClient.Models;
 using ArduinoClient.Tools;
 using DocumentFormat.OpenXml.EMMA;
 using DocumentFormat.OpenXml.Office2010.PowerPoint;
@@ -17,9 +18,11 @@ namespace ArduinoClient
 	{
 		private Thread hilo;
 		private ArduinoManager arduinoManager;
-		public ModifyUsuario(ArduinoManager arduinoManager)
+		private ISqliteDataAccess _sqliteDataAccess;
+		public ModifyUsuario(ArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess)
 		{
 			InitializeComponent();
+			_sqliteDataAccess = sqliteDataAccess;
 			this.arduinoManager = arduinoManager;
 
 			hilo = new Thread(listenSerial);
@@ -30,7 +33,7 @@ namespace ArduinoClient
 		{
 			try
 			{
-				SqliteDataAccess.ModifyUser(getUserFromTextbox());				
+				_sqliteDataAccess.ModifyUser(getUserFromTextbox());				
 			}
 			catch(Exception ex)
 			{

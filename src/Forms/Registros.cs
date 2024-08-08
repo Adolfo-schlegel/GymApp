@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using DocumentFormat.OpenXml.Spreadsheet;
 using System.ComponentModel;
 using ArduinoClient.Extensions;
+using ArduinoClient.DB;
 
 namespace ArduinoClient
 {
@@ -23,12 +24,13 @@ namespace ArduinoClient
 		private List<UsuarioDB> LstUsers;
 		private UsuarioDB ScannedUser;
 		private ArduinoManager arduinoManager;
-
-		public Cliente(ArduinoManager arduinoManager)
+		private ISqliteDataAccess _sqliteDataAccess;
+		public Cliente(ArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess)
 		{			
 			Init();
 			dataGridView2.CellFormatting += dataGridView2_CellFormatting;
 			this.arduinoManager = arduinoManager;
+			_sqliteDataAccess = sqliteDataAccess;
 		}
 		private void dataGridView2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) => printUserNotUpdated();
 		private void Init()
@@ -49,7 +51,7 @@ namespace ArduinoClient
 		}
 		public List<UsuarioDB> getUsers()
 		{
-			LstUsers = SqliteDataAccess.LoadPeople();
+			LstUsers = _sqliteDataAccess.LoadPeople();
 			return LstUsers;
 		}
 		private void openDoor()
@@ -154,7 +156,7 @@ namespace ArduinoClient
 						ledPanel.GradientBottomColor = System.Drawing.Color.Green;
 						ledPanel.GradientTopColor = System.Drawing.Color.Green;
 
-						SqliteDataAccess.LogDateAccessUser(ScannedUser.Id, 
+						_sqliteDataAccess.LogDateAccessUser(ScannedUser.Id, 
 							$"{DateTime.Now.ToString("yy/MM/dd - HH:mm")} - OK");
 
 						openDoor();
@@ -167,7 +169,7 @@ namespace ArduinoClient
 						ledPanel.GradientBottomColor = System.Drawing.Color.Red;
 						ledPanel.GradientTopColor = System.Drawing.Color.Red;
 
-						SqliteDataAccess.LogDateAccessUser(ScannedUser.Id,
+						_sqliteDataAccess.LogDateAccessUser(ScannedUser.Id,
 							$"{DateTime.Now.ToString("yy/MM/dd - HH:mm")} - Error");
 
 						closeDoor();
@@ -233,7 +235,7 @@ namespace ArduinoClient
 
 				UsuarioDB user = row.DataBoundItem as UsuarioDB;
 
-				ModifyUsuario userForm = new ModifyUsuario(arduinoManager);
+				ModifyUsuario userForm = new ModifyUsuario(arduinoManager, _sqliteDataAccess);
 
 				userForm.fillTextBoxUser(user.Codigo, user.Id, user.Nombre, user.Apellido, user.Documento.ToString(), user.Sexo,user.Celular.ToString(), user.MedioPago, user.Fecha.ToString(), user.Monto.ToString(), user.Correo, user.Log);
 
@@ -269,8 +271,8 @@ namespace ArduinoClient
 		private void btnAtualizarCuota_Click(object sender, EventArgs e)
 		{
 			try
-			{ 				
-				SqliteDataAccess.UpDateUser(new UsuarioDB {Id = int.Parse(lblId.Text), Fecha = DateTime.Today.ToShortDateString() });							
+			{
+				_sqliteDataAccess.UpdateQuota(new UsuarioDB {Id = int.Parse(lblId.Text), Fecha = DateTime.Today.ToShortDateString() });							
 				refreshGrid();
 
 				MessageBox.Show("Usuario al dia");
@@ -285,7 +287,7 @@ namespace ArduinoClient
 		{
 			Hilo.Suspend();
 
-			NewUsuario user = new NewUsuario(arduinoManager);
+			NewUsuario user = new NewUsuario(arduinoManager, _sqliteDataAccess);
 
 			user.Code = lblCodigo.Text;
 
@@ -307,7 +309,7 @@ namespace ArduinoClient
 				{
 					if (ClickedId >= 0)
 					{
-						SqliteDataAccess.DeleteUser(ClickedId);
+						_sqliteDataAccess.DeleteUser(ClickedId);
 
 						refreshGrid();
 
@@ -361,7 +363,7 @@ namespace ArduinoClient
 		}
 		private void btnAgregar_Click(object sender, EventArgs e)
 		{
-			NewUsuario user = new NewUsuario(arduinoManager);
+			NewUsuario user = new NewUsuario(arduinoManager, _sqliteDataAccess);
 
 			user.Code = lblCodigo.Text;
 

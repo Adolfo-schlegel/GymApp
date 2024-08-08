@@ -1,49 +1,34 @@
 using ArduinoClient.Tools.Log;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace ArduinoClient.WorkingService
 {
-	public class DailyWorker
+	public class DailyWorker 
 	{
-		private readonly Tools.Log.ILogger _logger;
+		private readonly IFileLogger _logger;
 		private readonly IReportSender _reportSender;
 		private Timer _timer;
-		private TimeSpan? _executionTime; // Hora específica de ejecución (opcional)
-		private TimeSpan? _executionInterval; // Intervalo de ejecución (opcional)
-		private DateTime _lastExecutionTime; // Última hora de ejecución
+		private DateTime _lastExecutionTime; 
+		public TimeSpan? ExecutionTime { get; set; }
+		public TimeSpan? ExecutionInterval { get; set; }
 
-		public TimeSpan? ExecutionTime
+		public DailyWorker(IEnumerable<IFileLogger> logger, IReportSender reportSender)
 		{
-			get => _executionTime;
-			set
-			{
-				_executionTime = value;
-				ResetTimer();
-			}
-		}
-		public TimeSpan? ExecutionInterval
-		{
-			get => _executionInterval;
-			set
-			{
-				_executionInterval = value;
-				ResetTimer();
-			}
-		}
+			_logger = logger.Where(x => x.TypeLogger == TypeLogger.DailyWorker).First();
 
-		public DailyWorker(Tools.Log.ILogger logger, IReportSender reportSender)
-		{
-			_logger = logger;
 			_reportSender = reportSender;
 			_lastExecutionTime = DateTime.MinValue;
-			StartBackgroundThread();
-		}
 
-		private void StartBackgroundThread()
+			_logger.Log($"{DateTime.Now} DailyWorker initialized.");
+		}
+		public void StartWorking()
 		{
 			var thread = new Thread(() =>
 			{
@@ -54,7 +39,11 @@ namespace ArduinoClient.WorkingService
 				IsBackground = true
 			};
 			thread.Start();
+
+			_logger.Log($"{DateTime.Now} DailyWorker starting.\n");
+
 		}
+
 
 		private void CheckTimeAndExecute(object state)
 		{
@@ -63,9 +52,9 @@ namespace ArduinoClient.WorkingService
 				var currentTime = DateTime.Now;
 
 				//Ejecuta los trabajos por Hora indicada
-				if (_executionTime.HasValue)
+				if (ExecutionTime.HasValue)
 				{
-					var executionDateTime = currentTime.Date + _executionTime.Value;
+					var executionDateTime = currentTime.Date + ExecutionTime.Value;
 					if (currentTime >= executionDateTime && currentTime - _lastExecutionTime >= TimeSpan.FromDays(1))
 					{
 						ExecuteJobs();
@@ -74,9 +63,9 @@ namespace ArduinoClient.WorkingService
 				}
 
 				//Ejecuta los trabajos por intervalo indicado
-				if (_executionInterval.HasValue)
+				if (ExecutionInterval.HasValue)
 				{
-					if (currentTime - _lastExecutionTime >= _executionInterval.Value)
+					if (currentTime - _lastExecutionTime >= ExecutionInterval.Value)
 					{
 						ExecuteJobs();
 						_lastExecutionTime = currentTime;
@@ -85,41 +74,42 @@ namespace ArduinoClient.WorkingService
 			}
 			catch (Exception ex)
 			{
-				_logger.Log("Error in CheckTimeAndExecute: " + ex.Message);
+				_logger.Log($"{DateTime.Now} Error in CheckTimeAndExecute: " + ex.Message);
 			}
 		}
 		private void ExecuteJobs()
 		{
 			try
 			{
-				_logger.Log("Executing task at: " + DateTime.Now);
+				_logger.Log($"{DateTime.Now} Executing task at: " + DateTime.Now);
 
 				var diskResult = _reportSender.SendToDisk();
 				var emailResult = _reportSender.SendEmailReport();
 				var googleDriveResult = _reportSender.SendGoogleDriveReport();
 
-				_logger.Log("SendToDisk result -> " + diskResult);
-				_logger.Log("SendEmailReport result -> " + emailResult);
-				_logger.Log("SendGoogleDriveReport result -> " + googleDriveResult);
+				_logger.Log($"{DateTime.Now} SendToDisk result -> " + diskResult);
+				_logger.Log($"{DateTime.Now} SendEmailReport result -> " + emailResult);
+				_logger.Log($"{DateTime.Now} SendGoogleDriveReport result -> " + googleDriveResult);
 
-				_logger.Log("End task");
+				_logger.Log($"{DateTime.Now} <<-End task\n");
 			}
 			catch (Exception ex)
 			{
-				_logger.Log("Error in ExecuteJobs: " + ex.Message);
+				_logger.Log($"{DateTime.Now} Error in ExecuteJobs: " + ex.Message);
 			}
 		}
-		private void ResetTimer()
-		{
-			try
-			{
-				_timer?.Change(TimeSpan.Zero, TimeSpan.FromMinutes(1)); // Reiniciar el temporizador
-			}
-			catch (Exception ex)
-			{
-				_logger.Log("Error in ResetTimer: " + ex.Message);
-			}
-		}
+		//private void ResetTimer()
+		//{
+		//	try
+		//	{
+		//		_timer?.Change(TimeSpan.Zero, TimeSpan.FromMinutes(1)); // Reiniciar el temporizador
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		_logger.Log("Error in ResetTimer: " + ex.Message);
+		//	}
+		//}
+
 		public void Stop()
 		{
 			try
@@ -128,8 +118,13 @@ namespace ArduinoClient.WorkingService
 			}
 			catch (Exception ex)
 			{
-				_logger.Log("Error in Stop: " + ex.Message);
+				_logger.Log($"{DateTime.Now} Error in Stop: " + ex.Message);
 			}
+		}
+
+		public void Dispose()
+		{
+			_timer?.Dispose();
 		}
 	}
 }

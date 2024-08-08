@@ -1,12 +1,15 @@
-﻿using ArduinoClient.Tools;
+﻿using ArduinoClient.DB;
+using ArduinoClient.Tools;
 using ArduinoClient.Tools.Log;
 using ArduinoClient.WorkingService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Configuration;
 using System.IO;
 using System.IO.Ports;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -22,23 +25,35 @@ namespace ArduinoClient
 		{
 			var host = CreateHostBuilder().Build();
 
+			var sqliteDataAccess = host.Services.GetRequiredService<ISqliteDataAccess>();
+
 			var arduinoManager = host.Services.GetRequiredService<ArduinoManager>();
 			arduinoManager.StartReading();
 
+			var dailyWorker = host.Services.GetRequiredService<DailyWorker>();		
+			//dailyWorker.ExecutionTime = TimeSpan.FromHours(23);
+			dailyWorker.ExecutionInterval = TimeSpan.FromMinutes(1); 
+			dailyWorker.StartWorking();
+
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Cliente(arduinoManager));			
+			Application.Run(new Cliente(arduinoManager, sqliteDataAccess));			
 		}
 
 		private static IHostBuilder CreateHostBuilder() =>
 		Host.CreateDefaultBuilder()
 		.ConfigureServices((hostContext, services) =>
 		{
-			services.AddSingleton<ILogger, FileLogger>(provider =>
-			{
-				return new FileLogger(@"C:\TEMP\logs", "LogFile");
-			});
-			
+			services.AddSingleton<ISqliteDataAccess, SqliteDataAccess>();
+
+			services.AddSingleton<IReportSender, ReportSender>();
+
+			services.AddSingleton<IFileLogger, FileLogger>(provider => 
+			new FileLogger(@"C:\TEMP\logs", "DailyWorkerLogFile") { TypeLogger = TypeLogger.DailyWorker });
+
+			services.AddSingleton<IFileLogger, FileLogger>(provider =>
+			new FileLogger(@"C:\TEMP\logs", "ReportSenderLogFile") { TypeLogger = TypeLogger.ReportSender });
+
 			services.AddSingleton(provider => new SerialPort
 			{
 				PortName = ConfigurationManager.AppSettings["PuertoCOM"],
@@ -46,22 +61,8 @@ namespace ArduinoClient
 			});
 			
 			services.AddSingleton<ArduinoManager>();
-			
-			services.AddSingleton<IReportSender, ReportSender>();
-			
-			services.AddSingleton<DailyWorker>(provider =>
-			{
-				var logger = provider.GetRequiredService<ILogger>();
-				var reportSender = provider.GetRequiredService<IReportSender>();
 
-				var worker = new DailyWorker(logger, reportSender)
-				{
-					//ExecutionTime = TimeSpan.FromHours(23), // Ejemplo de configuración
-					ExecutionInterval = TimeSpan.FromSeconds(2) // Ejemplo de configuración
-				};
-
-				return worker;
-			});
+			services.AddSingleton<DailyWorker>();
 		});
 
 	}
