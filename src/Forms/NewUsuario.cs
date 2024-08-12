@@ -1,6 +1,7 @@
 ﻿using ArduinoClient.DB;
 using ArduinoClient.Models;
 using ArduinoClient.Tools;
+using ArduinoClient.Tools.Arduino;
 using System;
 using System.Threading;
 using System.Windows.Forms;
@@ -10,12 +11,12 @@ namespace ArduinoClient
 	{
 		private Thread hilo;
 		public string Code { get; set; }
-		private ArduinoManager arduinoManager;
+		private IArduinoManager _arduinoManager;
 		private ISqliteDataAccess _sqliteDataAccess;
-		public NewUsuario(ArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess)
+		public NewUsuario(IArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess)
 		{			
 			InitializeComponent();
-			this.arduinoManager = arduinoManager;
+			this._arduinoManager = arduinoManager;
 			_sqliteDataAccess = sqliteDataAccess;
 			hilo = new Thread(listenSerial);
 			hilo.Name = "UserIdProcess";
@@ -62,7 +63,7 @@ namespace ArduinoClient
 		{
 			while (true)
 			{
-				var data = arduinoManager.GetNextReceivedData();
+				var data = _arduinoManager.GetNextReceivedData();
 
 				if (data != null)
 				{

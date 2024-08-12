@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using ArduinoClient.Tools.Arduino;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -8,7 +9,7 @@ using System.Windows.Forms;
 
 namespace ArduinoClient.Tools
 {
-	public class ArduinoManager
+	public class ArduinoManager : IArduinoManager
 	{
 			
 		private static ManualResetEvent suspendEvent = new ManualResetEvent(false);
@@ -27,8 +28,60 @@ namespace ArduinoClient.Tools
 			SystemEvents.PowerModeChanged += OnPowerModeChanged;
 			InitArduino();
 			InitThread();			
+			StartReading();
 		}
-		
+		public string WriteToSerialPort(string data)
+		{
+			string lstResult = "OK";
+
+			if (_serialPort != null && _serialPort.IsOpen)
+			{
+				try
+				{
+					_serialPort.WriteLine(data);
+				}
+				catch (Exception ex)
+				{
+					lstResult = $"Error writing to serial port: {ex.Message}";
+				}
+			}
+			else
+			{
+				lstResult = "Serial port is not open.";
+			}
+			return lstResult;
+		}
+		public void OpenPort()
+		{
+			if (_serialPort != null && !_serialPort.IsOpen)
+			{
+				_serialPort.Open();
+				Console.WriteLine("Puerto Arduino abierto correctamente.");
+			}
+		}
+
+		public void ClosePort()
+		{
+			if (_serialPort != null && _serialPort.IsOpen)
+			{
+				_serialPort.Close();
+				Console.WriteLine("Puerto Arduino cerrado correctamente.");
+			}
+		}
+
+		public bool IsPortOpen()
+		{
+			return _serialPort != null && _serialPort.IsOpen;
+		}
+
+		public void DisposePort()
+		{
+			if (_serialPort != null)
+			{
+				_serialPort.Dispose();
+				Console.WriteLine("Puerto Arduino liberado correctamente.");
+			}
+		}
 		private void OnPowerModeChanged(object sender, PowerModeChangedEventArgs e)
 		{
 			if (e.Mode == PowerModes.Suspend)

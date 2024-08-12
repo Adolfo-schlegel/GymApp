@@ -84,6 +84,8 @@
 			this.agregarUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.eliminarUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.enviarReporteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.EnviarReporte = new System.Windows.Forms.ToolStripMenuItem();
 			this.fondoPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.usuarioDBBindingSource)).BeginInit();
@@ -140,7 +142,7 @@
 			this.fondoPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.fondoPanel.Name = "fondoPanel";
 			this.fondoPanel.Padding = new System.Windows.Forms.Padding(4, 0, 4, 15);
-			this.fondoPanel.Size = new System.Drawing.Size(922, 647);
+			this.fondoPanel.Size = new System.Drawing.Size(959, 647);
 			this.fondoPanel.TabIndex = 21;
 			// 
 			// btnGroupDeudores
@@ -165,7 +167,7 @@
 			// 
 			// txtSearch
 			// 
-			this.txtSearch.Location = new System.Drawing.Point(658, 3);
+			this.txtSearch.Location = new System.Drawing.Point(710, 3);
 			this.txtSearch.Name = "txtSearch";
 			this.txtSearch.Size = new System.Drawing.Size(242, 20);
 			this.txtSearch.TabIndex = 39;
@@ -219,7 +221,7 @@
 			this.ledPanel.GradientAngle = 90F;
 			this.ledPanel.GradientBottomColor = System.Drawing.SystemColors.Control;
 			this.ledPanel.GradientTopColor = System.Drawing.SystemColors.Control;
-			this.ledPanel.Location = new System.Drawing.Point(583, 0);
+			this.ledPanel.Location = new System.Drawing.Point(666, -1);
 			this.ledPanel.Name = "ledPanel";
 			this.ledPanel.Size = new System.Drawing.Size(27, 27);
 			this.ledPanel.TabIndex = 36;
@@ -674,10 +676,12 @@
             this.exportarPlanillaToolStripMenuItem,
             this.agregarUsuarioToolStripMenuItem,
             this.eliminarUsuarioToolStripMenuItem,
-            this.refreshToolStripMenuItem});
+            this.EnviarReporte,
+            this.refreshToolStripMenuItem,
+            this.enviarReporteToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(4, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(914, 25);
+			this.menuStrip1.Size = new System.Drawing.Size(951, 25);
 			this.menuStrip1.TabIndex = 35;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -735,12 +739,29 @@
 			this.refreshToolStripMenuItem.Text = "Refresh";
 			this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
 			// 
+			// enviarReporteToolStripMenuItem
+			// 
+			this.enviarReporteToolStripMenuItem.Name = "enviarReporteToolStripMenuItem";
+			this.enviarReporteToolStripMenuItem.Size = new System.Drawing.Size(95, 21);
+			this.enviarReporteToolStripMenuItem.Text = "Enviar Reporte";
+			// 
+			// EnviarReporte
+			// 
+			this.EnviarReporte.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+			this.EnviarReporte.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
+			this.EnviarReporte.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+			this.EnviarReporte.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+			this.EnviarReporte.Name = "EnviarReporte";
+			this.EnviarReporte.Size = new System.Drawing.Size(110, 21);
+			this.EnviarReporte.Text = "Enviar Reporte";
+			this.EnviarReporte.Click += new System.EventHandler(this.EnviarReporte_Click);
+			// 
 			// Cliente
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
-			this.ClientSize = new System.Drawing.Size(922, 647);
+			this.ClientSize = new System.Drawing.Size(959, 647);
 			this.Controls.Add(this.fondoPanel);
 			this.DoubleBuffered = true;
 			this.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
@@ -820,6 +841,8 @@
 		private System.Windows.Forms.TextBox txtSearch;
 		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
 		private Models.RJButton btnGroupDeudores;
+		private System.Windows.Forms.ToolStripMenuItem EnviarReporte;
+		private System.Windows.Forms.ToolStripMenuItem enviarReporteToolStripMenuItem;
 	}
 }
 

@@ -14,6 +14,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using System.ComponentModel;
 using ArduinoClient.Extensions;
 using ArduinoClient.DB;
+using ArduinoClient.Tools.Arduino;
 
 namespace ArduinoClient
 {
@@ -23,13 +24,13 @@ namespace ArduinoClient
 		private Thread Hilo;		
 		private List<UsuarioDB> LstUsers;
 		private UsuarioDB ScannedUser;
-		private ArduinoManager arduinoManager;
+		private IArduinoManager _arduinoManager;
 		private ISqliteDataAccess _sqliteDataAccess;
-		public Cliente(ArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess)
+		public Cliente(IArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess)
 		{			
 			Init();
 			dataGridView2.CellFormatting += dataGridView2_CellFormatting;
-			this.arduinoManager = arduinoManager;
+			this._arduinoManager = arduinoManager;
 			_sqliteDataAccess = sqliteDataAccess;
 		}
 		private void dataGridView2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) => printUserNotUpdated();
@@ -55,26 +56,18 @@ namespace ArduinoClient
 			return LstUsers;
 		}
 		private void openDoor()
-		{
-			try
-			{
-				arduinoManager._serialPort.Write("E");
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show("Error: " + ex.Message);
-			}
+		{			
+			string result = _arduinoManager.WriteToSerialPort("E");
+			
+			if(result != "OK")
+				MessageBox.Show(result);			
 		}
 		private void closeDoor()
 		{
-			try
-			{
-				arduinoManager._serialPort.Write("X");
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show("Error: " + ex.Message);
-			}
+
+			string result = _arduinoManager.WriteToSerialPort("X");
+			if (result != "OK")
+				MessageBox.Show(result);
 		}
 		private void refreshGrid()
 		{
@@ -209,7 +202,7 @@ namespace ArduinoClient
 				while (true)
 				{
 					Thread.Sleep(100);
-					var data = arduinoManager.GetNextReceivedData();
+					var data = _arduinoManager.GetNextReceivedData();
 
 					if (data != null)
 					{
@@ -235,7 +228,7 @@ namespace ArduinoClient
 
 				UsuarioDB user = row.DataBoundItem as UsuarioDB;
 
-				ModifyUsuario userForm = new ModifyUsuario(arduinoManager, _sqliteDataAccess);
+				ModifyUsuario userForm = new ModifyUsuario(_arduinoManager, _sqliteDataAccess);
 
 				userForm.fillTextBoxUser(user.Codigo, user.Id, user.Nombre, user.Apellido, user.Documento.ToString(), user.Sexo,user.Celular.ToString(), user.MedioPago, user.Fecha.ToString(), user.Monto.ToString(), user.Correo, user.Log);
 
@@ -248,9 +241,13 @@ namespace ArduinoClient
 		}
 		private void EventCliente_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			if (arduinoManager._serialPort.IsOpen) arduinoManager._serialPort.Close();
-			arduinoManager.StopReading();
-			arduinoManager._serialPort.Dispose();			
+			if (_arduinoManager.IsPortOpen())
+			{
+				_arduinoManager.ClosePort();
+			}
+			_arduinoManager.StopReading();
+			_arduinoManager.DisposePort();
+
 			Environment.Exit(0);
 
 		}
@@ -287,7 +284,7 @@ namespace ArduinoClient
 		{
 			Hilo.Suspend();
 
-			NewUsuario user = new NewUsuario(arduinoManager, _sqliteDataAccess);
+			NewUsuario user = new NewUsuario(_arduinoManager, _sqliteDataAccess);
 
 			user.Code = lblCodigo.Text;
 
@@ -363,7 +360,7 @@ namespace ArduinoClient
 		}
 		private void btnAgregar_Click(object sender, EventArgs e)
 		{
-			NewUsuario user = new NewUsuario(arduinoManager, _sqliteDataAccess);
+			NewUsuario user = new NewUsuario(_arduinoManager, _sqliteDataAccess);
 
 			user.Code = lblCodigo.Text;
 
@@ -416,6 +413,11 @@ namespace ArduinoClient
 			// Sort by status first, then by the "Fecha" column (you can change this to any column you prefer)
 			PropertyDescriptor propDesc = TypeDescriptor.GetProperties(typeof(UsuarioDB))["Fecha"];
 			((IBindingList)bindingList).ApplySort(propDesc, ListSortDirection.Ascending);
+		}
+
+		private void EnviarReporte_Click(object sender, EventArgs e)
+		{
+
 		}
 	}
 }

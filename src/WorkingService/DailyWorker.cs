@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -10,23 +11,46 @@ using System.Threading.Tasks;
 
 namespace ArduinoClient.WorkingService
 {
-	public class DailyWorker 
+	public class DailyWorker : IDailyWorker
 	{
 		private readonly IFileLogger _logger;
 		private readonly IReportSender _reportSender;
 		private Timer _timer;
 		private DateTime _lastExecutionTime; 
 		public TimeSpan? ExecutionTime { get; set; }
-		public TimeSpan? ExecutionInterval { get; set; }
+		public TimeSpan? ExecutionInterval { get; set; } 
 
 		public DailyWorker(IEnumerable<IFileLogger> logger, IReportSender reportSender)
 		{
-			_logger = logger.Where(x => x.TypeLogger == TypeLogger.DailyWorker).First();
+			SetExecutionTime();
 
+			_logger = logger.Where(x => x.TypeLogger == TypeLogger.DailyWorker).First();
 			_reportSender = reportSender;
 			_lastExecutionTime = DateTime.MinValue;
-
 			_logger.Log($"{DateTime.Now} DailyWorker initialized.");
+
+			StartWorking();
+		}
+		private void SetExecutionTime()
+		{
+			try
+			{
+				var executionTimeInHours = ConfigurationManager.AppSettings["DailyWorker.ExecutionTimeInHours"];
+				var executionInterval = ConfigurationManager.AppSettings["DailyWorker.ExecutionIntervalMinutes"];
+
+				ExecutionTime = string.IsNullOrEmpty(executionTimeInHours)
+					? (TimeSpan?)null
+					: TimeSpan.FromHours(Convert.ToDouble(executionTimeInHours));
+
+				ExecutionInterval = string.IsNullOrEmpty(executionInterval)
+					? (TimeSpan?)null
+					: TimeSpan.FromHours(Convert.ToDouble(executionInterval));
+			}
+			catch(Exception ex)
+			{
+				_logger.Log($"{ex.Message}");
+			}
+
 		}
 		public void StartWorking()
 		{
@@ -41,10 +65,8 @@ namespace ArduinoClient.WorkingService
 			thread.Start();
 
 			_logger.Log($"{DateTime.Now} DailyWorker starting.\n");
-
 		}
-
-
+		
 		private void CheckTimeAndExecute(object state)
 		{
 			try
@@ -77,7 +99,7 @@ namespace ArduinoClient.WorkingService
 				_logger.Log($"{DateTime.Now} Error in CheckTimeAndExecute: " + ex.Message);
 			}
 		}
-		private void ExecuteJobs()
+		public void ExecuteJobs()
 		{
 			try
 			{
@@ -109,7 +131,6 @@ namespace ArduinoClient.WorkingService
 		//		_logger.Log("Error in ResetTimer: " + ex.Message);
 		//	}
 		//}
-
 		public void Stop()
 		{
 			try

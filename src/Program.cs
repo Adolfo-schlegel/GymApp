@@ -1,5 +1,6 @@
 ﻿using ArduinoClient.DB;
 using ArduinoClient.Tools;
+using ArduinoClient.Tools.Arduino;
 using ArduinoClient.Tools.Email;
 using ArduinoClient.Tools.Log;
 using ArduinoClient.WorkingService;
@@ -26,20 +27,14 @@ namespace ArduinoClient
 		{
 			var host = CreateHostBuilder().Build();
 
-			var sqliteDataAccess = host.Services.GetRequiredService<ISqliteDataAccess>();
+			//Background Services
+			var _dailyWorker = host.Services.GetRequiredService<IDailyWorker>();
+			var _arduinoManager = host.Services.GetRequiredService<IArduinoManager>();
 
-			var arduinoManager = host.Services.GetRequiredService<ArduinoManager>();
-			arduinoManager.StartReading();
-
-			var dailyWorker = host.Services.GetRequiredService<DailyWorker>();		
-			dailyWorker.ExecutionTime = TimeSpan.FromHours(23);
-			//dailyWorker.ExecutionInterval = TimeSpan.FromMinutes(1); 
-			
-			dailyWorker.StartWorking();
-
+			//Run App
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Cliente(arduinoManager, sqliteDataAccess));			
+			Application.Run(host.Services.GetRequiredService<Cliente>());			
 		}
 
 		private static IHostBuilder CreateHostBuilder() =>
@@ -71,11 +66,10 @@ namespace ArduinoClient
 				BaudRate = 9600
 			});
 			
-			services.AddSingleton<ArduinoManager>();
-
-			services.AddSingleton<DailyWorker>();
+			services.AddSingleton<IArduinoManager, ArduinoManager>();
+			services.AddSingleton<IDailyWorker,DailyWorker>();
+			services.AddTransient<Cliente>();
 		});
-
 	}
 }
 

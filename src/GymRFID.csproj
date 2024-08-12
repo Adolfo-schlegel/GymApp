@@ -277,11 +277,13 @@
       <DependentUpon>NewUsuario.cs</DependentUpon>
     </Compile>
     <Compile Include="Tools\Arduino\ArduinoManager.cs" />
+    <Compile Include="Tools\Arduino\IArduinoManager.cs" />
     <Compile Include="Tools\Email\EmailSender.cs" />
     <Compile Include="Tools\Excel\ExcelManager.cs" />
     <Compile Include="Tools\Log\FileLogger.cs" />
     <Compile Include="Tools\Log\IFileLogger.cs" />
     <Compile Include="Tools\Log\TypeLogger.cs" />
+    <Compile Include="WorkingService\IDailyWorker.cs" />
     <Compile Include="WorkingService\IReportSender.cs" />
     <Compile Include="WorkingService\ReportSender.cs" />
     <Compile Include="WorkingService\DailyWorker.cs" />
