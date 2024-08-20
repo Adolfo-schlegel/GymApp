@@ -15,6 +15,9 @@ using System.ComponentModel;
 using ArduinoClient.Extensions;
 using ArduinoClient.DB;
 using ArduinoClient.Tools.Arduino;
+using DocumentFormat.OpenXml.Office.CustomUI;
+using ArduinoClient.Forms;
+using Microsoft.Extensions.Logging;
 
 namespace ArduinoClient
 {
@@ -116,7 +119,7 @@ namespace ArduinoClient
 			lblDaysLeft.Text = ScannedUser.daysLeft().ToString();
 			lblCodigo.Text = ScannedUser.Codigo;
 		}
-		private void showUserInfo(string code)
+		private void checkUserInfo(string code)
 		{
 			cleanLabels();
 
@@ -162,14 +165,18 @@ namespace ArduinoClient
 						closeDoor();
 					}
 
-					var log = $"{DateTime.Now.ToString("yy/MM/dd - HH:mm")} - {status}";
-
-					_sqliteDataAccess.LogHistoricalDateAccessUser(ScannedUser.Id, log);
-					_sqliteDataAccess.LogTodaysAccess(ScannedUser.Id, log);
+					logUser(status, ScannedUser.Id);
 				}));		
 			}
 
 			refreshGrid();
+		}
+		private void logUser(string status, int userId)
+		{
+			var line = $"{DateTime.Now.ToString("yy/MM/dd - HH:mm")} - {status}";
+
+			_sqliteDataAccess.LogHistoricalDateAccessUser(userId, line);
+			_sqliteDataAccess.LogTodaysAccess(userId, line);
 		}
 		private void cleanLabels()
 		{		
@@ -207,7 +214,7 @@ namespace ArduinoClient
 					{
 						var code = data.Replace("Card UID: ", "");
 
-						showUserInfo(code);
+						checkUserInfo(code);
 					}
 				}
 			}
@@ -413,10 +420,14 @@ namespace ArduinoClient
 			PropertyDescriptor propDesc = TypeDescriptor.GetProperties(typeof(UsuarioDB))["Fecha"];
 			((IBindingList)bindingList).ApplySort(propDesc, ListSortDirection.Ascending);
 		}
-
 		private void EnviarReporte_Click(object sender, EventArgs e)
 		{
 
+		}
+		private void ingresosDeHOYToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			var todayAccess = new TodayAccess(_sqliteDataAccess);
+			todayAccess.ShowDialog();
 		}
 	}
 }

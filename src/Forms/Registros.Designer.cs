@@ -43,18 +43,6 @@
 			this.lblId = new System.Windows.Forms.Label();
 			this.lblApellido = new System.Windows.Forms.Label();
 			this.dataGridView2 = new System.Windows.Forms.DataGridView();
-			this.idDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.nombreDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.apellidoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.fechaDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.montoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.documentoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.sexoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.celularDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.medioPagoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.correoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.codigoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.usuarioDBBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this.label10 = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
@@ -84,12 +72,23 @@
 			this.agregarUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.eliminarUsuarioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.enviarReporteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.EnviarReporte = new System.Windows.Forms.ToolStripMenuItem();
+			this.ingresosDeHOYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.idDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.nombreDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.apellidoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.fechaDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.montoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.documentoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.sexoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.celularDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.medioPagoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.correoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.codigoDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.usuarioDBBindingSource = new System.Windows.Forms.BindingSource(this.components);
 			this.fondoPanel.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.usuarioDBBindingSource)).BeginInit();
 			this.menuStrip1.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.usuarioDBBindingSource)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// contextMenuStrip1
@@ -142,7 +141,7 @@
 			this.fondoPanel.Margin = new System.Windows.Forms.Padding(0);
 			this.fondoPanel.Name = "fondoPanel";
 			this.fondoPanel.Padding = new System.Windows.Forms.Padding(4, 0, 4, 15);
-			this.fondoPanel.Size = new System.Drawing.Size(959, 647);
+			this.fondoPanel.Size = new System.Drawing.Size(1095, 647);
 			this.fondoPanel.TabIndex = 21;
 			// 
 			// btnGroupDeudores
@@ -156,7 +155,7 @@
 			this.btnGroupDeudores.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.btnGroupDeudores.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.btnGroupDeudores.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-			this.btnGroupDeudores.Location = new System.Drawing.Point(826, 372);
+			this.btnGroupDeudores.Location = new System.Drawing.Point(991, 374);
 			this.btnGroupDeudores.Name = "btnGroupDeudores";
 			this.btnGroupDeudores.Size = new System.Drawing.Size(92, 26);
 			this.btnGroupDeudores.TabIndex = 40;
@@ -167,7 +166,7 @@
 			// 
 			// txtSearch
 			// 
-			this.txtSearch.Location = new System.Drawing.Point(710, 3);
+			this.txtSearch.Location = new System.Drawing.Point(827, 3);
 			this.txtSearch.Name = "txtSearch";
 			this.txtSearch.Size = new System.Drawing.Size(242, 20);
 			this.txtSearch.TabIndex = 39;
@@ -221,7 +220,7 @@
 			this.ledPanel.GradientAngle = 90F;
 			this.ledPanel.GradientBottomColor = System.Drawing.SystemColors.Control;
 			this.ledPanel.GradientTopColor = System.Drawing.SystemColors.Control;
-			this.ledPanel.Location = new System.Drawing.Point(666, -1);
+			this.ledPanel.Location = new System.Drawing.Point(723, -2);
 			this.ledPanel.Name = "ledPanel";
 			this.ledPanel.Size = new System.Drawing.Size(27, 27);
 			this.ledPanel.TabIndex = 36;
@@ -301,85 +300,11 @@
 			this.dataGridView2.RowTemplate.DividerHeight = 2;
 			this.dataGridView2.RowTemplate.Height = 25;
 			this.dataGridView2.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-			this.dataGridView2.Size = new System.Drawing.Size(932, 395);
+			this.dataGridView2.Size = new System.Drawing.Size(1095, 395);
 			this.dataGridView2.TabIndex = 9;
 			this.dataGridView2.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.EvenDataGridView2_CellClick);
 			this.dataGridView2.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.EvenModifyUser_DoubleClick);
 			this.dataGridView2.ColumnHeaderMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView2_ColumnHeaderMouseClick);
-			// 
-			// idDataGridViewTextBoxColumn
-			// 
-			this.idDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
-			this.idDataGridViewTextBoxColumn.DataPropertyName = "Id";
-			this.idDataGridViewTextBoxColumn.HeaderText = "Id";
-			this.idDataGridViewTextBoxColumn.Name = "idDataGridViewTextBoxColumn";
-			this.idDataGridViewTextBoxColumn.Width = 41;
-			// 
-			// nombreDataGridViewTextBoxColumn
-			// 
-			this.nombreDataGridViewTextBoxColumn.DataPropertyName = "Nombre";
-			this.nombreDataGridViewTextBoxColumn.HeaderText = "Nombre";
-			this.nombreDataGridViewTextBoxColumn.Name = "nombreDataGridViewTextBoxColumn";
-			// 
-			// apellidoDataGridViewTextBoxColumn
-			// 
-			this.apellidoDataGridViewTextBoxColumn.DataPropertyName = "Apellido";
-			this.apellidoDataGridViewTextBoxColumn.HeaderText = "Apellido";
-			this.apellidoDataGridViewTextBoxColumn.Name = "apellidoDataGridViewTextBoxColumn";
-			// 
-			// fechaDataGridViewTextBoxColumn
-			// 
-			this.fechaDataGridViewTextBoxColumn.DataPropertyName = "Fecha";
-			this.fechaDataGridViewTextBoxColumn.HeaderText = "Fecha";
-			this.fechaDataGridViewTextBoxColumn.Name = "fechaDataGridViewTextBoxColumn";
-			// 
-			// montoDataGridViewTextBoxColumn
-			// 
-			this.montoDataGridViewTextBoxColumn.DataPropertyName = "Monto";
-			this.montoDataGridViewTextBoxColumn.HeaderText = "Monto";
-			this.montoDataGridViewTextBoxColumn.Name = "montoDataGridViewTextBoxColumn";
-			// 
-			// documentoDataGridViewTextBoxColumn
-			// 
-			this.documentoDataGridViewTextBoxColumn.DataPropertyName = "Documento";
-			this.documentoDataGridViewTextBoxColumn.HeaderText = "Documento";
-			this.documentoDataGridViewTextBoxColumn.Name = "documentoDataGridViewTextBoxColumn";
-			// 
-			// sexoDataGridViewTextBoxColumn
-			// 
-			this.sexoDataGridViewTextBoxColumn.DataPropertyName = "Sexo";
-			this.sexoDataGridViewTextBoxColumn.HeaderText = "Sexo";
-			this.sexoDataGridViewTextBoxColumn.Name = "sexoDataGridViewTextBoxColumn";
-			// 
-			// celularDataGridViewTextBoxColumn
-			// 
-			this.celularDataGridViewTextBoxColumn.DataPropertyName = "Celular";
-			this.celularDataGridViewTextBoxColumn.HeaderText = "Celular";
-			this.celularDataGridViewTextBoxColumn.Name = "celularDataGridViewTextBoxColumn";
-			// 
-			// medioPagoDataGridViewTextBoxColumn
-			// 
-			this.medioPagoDataGridViewTextBoxColumn.DataPropertyName = "MedioPago";
-			this.medioPagoDataGridViewTextBoxColumn.HeaderText = "MedioPago";
-			this.medioPagoDataGridViewTextBoxColumn.Name = "medioPagoDataGridViewTextBoxColumn";
-			// 
-			// correoDataGridViewTextBoxColumn
-			// 
-			this.correoDataGridViewTextBoxColumn.DataPropertyName = "Correo";
-			this.correoDataGridViewTextBoxColumn.HeaderText = "Correo";
-			this.correoDataGridViewTextBoxColumn.Name = "correoDataGridViewTextBoxColumn";
-			this.correoDataGridViewTextBoxColumn.Width = 150;
-			// 
-			// codigoDataGridViewTextBoxColumn
-			// 
-			this.codigoDataGridViewTextBoxColumn.DataPropertyName = "Codigo";
-			this.codigoDataGridViewTextBoxColumn.HeaderText = "Codigo";
-			this.codigoDataGridViewTextBoxColumn.Name = "codigoDataGridViewTextBoxColumn";
-			this.codigoDataGridViewTextBoxColumn.Width = 120;
-			// 
-			// usuarioDBBindingSource
-			// 
-			this.usuarioDBBindingSource.DataSource = typeof(ArduinoClient.Models.UsuarioDB);
 			// 
 			// label10
 			// 
@@ -676,12 +601,11 @@
             this.exportarPlanillaToolStripMenuItem,
             this.agregarUsuarioToolStripMenuItem,
             this.eliminarUsuarioToolStripMenuItem,
-            this.EnviarReporte,
             this.refreshToolStripMenuItem,
-            this.enviarReporteToolStripMenuItem});
+            this.ingresosDeHOYToolStripMenuItem});
 			this.menuStrip1.Location = new System.Drawing.Point(4, 0);
 			this.menuStrip1.Name = "menuStrip1";
-			this.menuStrip1.Size = new System.Drawing.Size(951, 25);
+			this.menuStrip1.Size = new System.Drawing.Size(1087, 25);
 			this.menuStrip1.TabIndex = 35;
 			this.menuStrip1.Text = "menuStrip1";
 			// 
@@ -734,34 +658,102 @@
 			this.refreshToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
 			this.refreshToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
 			this.refreshToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+			this.refreshToolStripMenuItem.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
 			this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
 			this.refreshToolStripMenuItem.Size = new System.Drawing.Size(66, 21);
 			this.refreshToolStripMenuItem.Text = "Refresh";
 			this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
 			// 
-			// enviarReporteToolStripMenuItem
+			// ingresosDeHOYToolStripMenuItem
 			// 
-			this.enviarReporteToolStripMenuItem.Name = "enviarReporteToolStripMenuItem";
-			this.enviarReporteToolStripMenuItem.Size = new System.Drawing.Size(95, 21);
-			this.enviarReporteToolStripMenuItem.Text = "Enviar Reporte";
+			this.ingresosDeHOYToolStripMenuItem.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
+			this.ingresosDeHOYToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
+			this.ingresosDeHOYToolStripMenuItem.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+			this.ingresosDeHOYToolStripMenuItem.Name = "ingresosDeHOYToolStripMenuItem";
+			this.ingresosDeHOYToolStripMenuItem.Size = new System.Drawing.Size(123, 21);
+			this.ingresosDeHOYToolStripMenuItem.Text = "Ingresos de HOY";
+			this.ingresosDeHOYToolStripMenuItem.Click += new System.EventHandler(this.ingresosDeHOYToolStripMenuItem_Click);
 			// 
-			// EnviarReporte
+			// idDataGridViewTextBoxColumn
 			// 
-			this.EnviarReporte.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
-			this.EnviarReporte.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold);
-			this.EnviarReporte.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
-			this.EnviarReporte.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
-			this.EnviarReporte.Name = "EnviarReporte";
-			this.EnviarReporte.Size = new System.Drawing.Size(110, 21);
-			this.EnviarReporte.Text = "Enviar Reporte";
-			this.EnviarReporte.Click += new System.EventHandler(this.EnviarReporte_Click);
+			this.idDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.idDataGridViewTextBoxColumn.DataPropertyName = "Id";
+			this.idDataGridViewTextBoxColumn.HeaderText = "Id";
+			this.idDataGridViewTextBoxColumn.Name = "idDataGridViewTextBoxColumn";
+			this.idDataGridViewTextBoxColumn.Width = 41;
+			// 
+			// nombreDataGridViewTextBoxColumn
+			// 
+			this.nombreDataGridViewTextBoxColumn.DataPropertyName = "Nombre";
+			this.nombreDataGridViewTextBoxColumn.HeaderText = "Nombre";
+			this.nombreDataGridViewTextBoxColumn.Name = "nombreDataGridViewTextBoxColumn";
+			// 
+			// apellidoDataGridViewTextBoxColumn
+			// 
+			this.apellidoDataGridViewTextBoxColumn.DataPropertyName = "Apellido";
+			this.apellidoDataGridViewTextBoxColumn.HeaderText = "Apellido";
+			this.apellidoDataGridViewTextBoxColumn.Name = "apellidoDataGridViewTextBoxColumn";
+			// 
+			// fechaDataGridViewTextBoxColumn
+			// 
+			this.fechaDataGridViewTextBoxColumn.DataPropertyName = "Fecha";
+			this.fechaDataGridViewTextBoxColumn.HeaderText = "Fecha";
+			this.fechaDataGridViewTextBoxColumn.Name = "fechaDataGridViewTextBoxColumn";
+			// 
+			// montoDataGridViewTextBoxColumn
+			// 
+			this.montoDataGridViewTextBoxColumn.DataPropertyName = "Monto";
+			this.montoDataGridViewTextBoxColumn.HeaderText = "Monto";
+			this.montoDataGridViewTextBoxColumn.Name = "montoDataGridViewTextBoxColumn";
+			// 
+			// documentoDataGridViewTextBoxColumn
+			// 
+			this.documentoDataGridViewTextBoxColumn.DataPropertyName = "Documento";
+			this.documentoDataGridViewTextBoxColumn.HeaderText = "Documento";
+			this.documentoDataGridViewTextBoxColumn.Name = "documentoDataGridViewTextBoxColumn";
+			// 
+			// sexoDataGridViewTextBoxColumn
+			// 
+			this.sexoDataGridViewTextBoxColumn.DataPropertyName = "Sexo";
+			this.sexoDataGridViewTextBoxColumn.HeaderText = "Sexo";
+			this.sexoDataGridViewTextBoxColumn.Name = "sexoDataGridViewTextBoxColumn";
+			// 
+			// celularDataGridViewTextBoxColumn
+			// 
+			this.celularDataGridViewTextBoxColumn.DataPropertyName = "Celular";
+			this.celularDataGridViewTextBoxColumn.HeaderText = "Celular";
+			this.celularDataGridViewTextBoxColumn.Name = "celularDataGridViewTextBoxColumn";
+			// 
+			// medioPagoDataGridViewTextBoxColumn
+			// 
+			this.medioPagoDataGridViewTextBoxColumn.DataPropertyName = "MedioPago";
+			this.medioPagoDataGridViewTextBoxColumn.HeaderText = "MedioPago";
+			this.medioPagoDataGridViewTextBoxColumn.Name = "medioPagoDataGridViewTextBoxColumn";
+			// 
+			// correoDataGridViewTextBoxColumn
+			// 
+			this.correoDataGridViewTextBoxColumn.DataPropertyName = "Correo";
+			this.correoDataGridViewTextBoxColumn.HeaderText = "Correo";
+			this.correoDataGridViewTextBoxColumn.Name = "correoDataGridViewTextBoxColumn";
+			this.correoDataGridViewTextBoxColumn.Width = 150;
+			// 
+			// codigoDataGridViewTextBoxColumn
+			// 
+			this.codigoDataGridViewTextBoxColumn.DataPropertyName = "Codigo";
+			this.codigoDataGridViewTextBoxColumn.HeaderText = "Codigo";
+			this.codigoDataGridViewTextBoxColumn.Name = "codigoDataGridViewTextBoxColumn";
+			this.codigoDataGridViewTextBoxColumn.Width = 120;
+			// 
+			// usuarioDBBindingSource
+			// 
+			this.usuarioDBBindingSource.DataSource = typeof(ArduinoClient.Models.UsuarioDB);
 			// 
 			// Cliente
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
-			this.ClientSize = new System.Drawing.Size(959, 647);
+			this.ClientSize = new System.Drawing.Size(1095, 647);
 			this.Controls.Add(this.fondoPanel);
 			this.DoubleBuffered = true;
 			this.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
@@ -781,9 +773,9 @@
 			this.fondoPanel.ResumeLayout(false);
 			this.fondoPanel.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.usuarioDBBindingSource)).EndInit();
 			this.menuStrip1.ResumeLayout(false);
 			this.menuStrip1.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.usuarioDBBindingSource)).EndInit();
 			this.ResumeLayout(false);
 
 		}
@@ -841,8 +833,7 @@
 		private System.Windows.Forms.TextBox txtSearch;
 		private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
 		private Models.RJButton btnGroupDeudores;
-		private System.Windows.Forms.ToolStripMenuItem EnviarReporte;
-		private System.Windows.Forms.ToolStripMenuItem enviarReporteToolStripMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem ingresosDeHOYToolStripMenuItem;
 	}
 }
 
