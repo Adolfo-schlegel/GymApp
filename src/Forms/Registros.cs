@@ -142,31 +142,30 @@ namespace ArduinoClient
 				{
 					setUserInfo();
 
+					var status = "OK";
 					if (ScannedUser.isUpToDate())
 					{
 						lblState.ForeColor = System.Drawing.Color.Green;
 						lblState.Text = "Usuario al dia";
 						ledPanel.GradientBottomColor = System.Drawing.Color.Green;
 						ledPanel.GradientTopColor = System.Drawing.Color.Green;
-
-						_sqliteDataAccess.LogDateAccessUser(ScannedUser.Id, 
-							$"{DateTime.Now.ToString("yy/MM/dd - HH:mm")} - OK");
-
 						openDoor();
 					}
 					else
 					{
+						status = "Error";
 						btnAtualizarCuota.Visible = true;
 						lblState.ForeColor = System.Drawing.Color.Red;
 						lblState.Text = "Usuario adeuda";
 						ledPanel.GradientBottomColor = System.Drawing.Color.Red;
-						ledPanel.GradientTopColor = System.Drawing.Color.Red;
-
-						_sqliteDataAccess.LogDateAccessUser(ScannedUser.Id,
-							$"{DateTime.Now.ToString("yy/MM/dd - HH:mm")} - Error");
-
+						ledPanel.GradientTopColor = System.Drawing.Color.Red;						
 						closeDoor();
 					}
+
+					var log = $"{DateTime.Now.ToString("yy/MM/dd - HH:mm")} - {status}";
+
+					_sqliteDataAccess.LogHistoricalDateAccessUser(ScannedUser.Id, log);
+					_sqliteDataAccess.LogTodaysAccess(ScannedUser.Id, log);
 				}));		
 			}
 

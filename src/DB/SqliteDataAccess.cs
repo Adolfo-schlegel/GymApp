@@ -24,7 +24,7 @@ namespace ArduinoClient
 				return output.ToList();
 			}
 		}
-		public void LogDateAccessUser(int userId, string logLine)
+		public void LogHistoricalDateAccessUser(int userId, string logLine)
 		{
 			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
 			{
@@ -46,10 +46,10 @@ namespace ArduinoClient
 			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
 			{
 				cnn.Open();
-				//cnn.Execute("update Usuario set Codigo = @Codigo, Nombre = @Nombre, Apellido = @Apellido, Documento = @Documento, Sexo = @Sexo, Celular = @Celular, MedioPago = @MedioPago, Fecha = @Fecha, Monto = @Monto, Correo = @Correo, EstadoCorreo = @EstadoCorreo where Id = @Id", user);
+				cnn.Execute("update Usuario set Codigo = @Codigo, Nombre = @Nombre, Apellido = @Apellido, Documento = @Documento, Sexo = @Sexo, Celular = @Celular, MedioPago = @MedioPago, Fecha = @Fecha, Monto = @Monto, Correo = @Correo, EstadoCorreo = @EstadoCorreo where Id = @Id", user);
 
-				//Comentar esta linea para que no se guarde el LOG
-				cnn.Execute("update Usuario set Codigo = @Codigo, Nombre = @Nombre, Apellido = @Apellido, Documento = @Documento, Sexo = @Sexo, Celular = @Celular, MedioPago = @MedioPago, Fecha = @Fecha, Monto = @Monto, Correo = @Correo, EstadoCorreo = @EstadoCorreo, Log = @Log where Id = @Id", user);
+				//Comentar esta linea para que no se pueda modificar el Log desde el texbox
+				//cnn.Execute("update Usuario set Codigo = @Codigo, Nombre = @Nombre, Apellido = @Apellido, Documento = @Documento, Sexo = @Sexo, Celular = @Celular, MedioPago = @MedioPago, Fecha = @Fecha, Monto = @Monto, Correo = @Correo, EstadoCorreo = @EstadoCorreo, Log = @Log where Id = @Id", user);
 			}
 		}
 		public void UpdateQuota(UsuarioDB user)
@@ -73,7 +73,7 @@ namespace ArduinoClient
 		{
 			return ConfigurationManager.ConnectionStrings[id].ConnectionString;
 		}
-		public List<string> GetLogEntries()
+		public List<string> GetHistoricalLogsEntries()
 		{
 			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
 			{
@@ -97,13 +97,51 @@ namespace ArduinoClient
 				return result;
 			}
 		}
-		public void ClearLogs()
+		public void ClearHistoricalLogs()
 		{
 			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
 			{
 				cnn.Open();
 				string query = "UPDATE Usuario SET Log = ''";
 				cnn.Execute(query);
+			}
+		}
+		public List<UserAccessSummary> GetTodaysAccessSummary()
+		{
+			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+			{
+				cnn.Open();
+
+				string query = @"
+                SELECT u.Nombre, u.Apellido, i.Log, COUNT(i.id) AS IngresoCount
+                FROM Ingresos i
+                JOIN Usuario u ON i.Usuario_id = u.id
+                GROUP BY u.Nombre, u.Apellido, i.Log
+                ORDER BY u.Nombre, u.Apellido";
+
+				var result = cnn.Query<UserAccessSummary>(query).ToList();
+				return result;
+			}
+		}
+
+		// Otros métodos...
+	
+		public void LogTodaysAccess(int userId, string logLine)
+		{
+			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+			{
+				cnn.Open();
+				string query = "UPDATE Ingresos SET Log = IFNULL(Log, '') || @LogLine || char(10) WHERE Usuario_id = @UserId";
+				cnn.Execute(query, new { LogLine = logLine, UserId = userId });
+			}
+		}
+
+		public void ClearTodaysAccess()
+		{
+			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+			{
+				cnn.Open();
+				cnn.Execute("DELETE FROM Ingresos");
 			}
 		}
 	}

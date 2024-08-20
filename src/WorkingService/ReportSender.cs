@@ -24,20 +24,23 @@ namespace ArduinoClient.WorkingService
 		{
 			string result = "OK";
 
-			var entries = _sqliteDataAccess.GetLogEntries();
+			var entries = _sqliteDataAccess.GetTodaysAccessSummary();
 			
 			if (entries.Count > 0)
 			{
 				var message = $"";
-				entries.ForEach(x =>
+
+				entries.ForEach(usuario =>
 				{
-					_logger.Log(x);
-					message += "\n" + x;
+					var content = $"{usuario.Nombre} {usuario.Apellido} {usuario.Log}";
+
+					_logger.Log(content);
+					message += "\n" + content;
 				});
 
-				_sqliteDataAccess.ClearLogs();
+				_sqliteDataAccess.ClearTodaysAccess();
 
-				result = _emailSender.SendEmail("crosspablo23@gmail.com", "adolfo.77@outlook.es", $"Ingresos de hoy {DateTime.Today}", message);
+				result = _emailSender.SendEmail("crosspablo23@gmail.com", "adolfo.77@outlook.es", $"{entries.FirstOrDefault().IngresoCount} Ingresos de hoy {DateTime.Today}", message);
 			}
 
 			return result;

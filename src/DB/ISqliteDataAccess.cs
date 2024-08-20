@@ -10,12 +10,15 @@ namespace ArduinoClient.DB
 	public interface ISqliteDataAccess
 	{
 		List<UsuarioDB> LoadPeople();
-		void LogDateAccessUser(int userId, string logLine);
+		void LogHistoricalDateAccessUser(int userId, string logLine);
 		void SaveUser(UsuarioDB user);
 		void ModifyUser(UsuarioDB user);
 		void UpdateQuota(UsuarioDB user);
 		void DeleteUser(int id);
-		List<string> GetLogEntries();
-		void ClearLogs();
+		List<string> GetHistoricalLogsEntries();
+		List<UserAccessSummary> GetTodaysAccessSummary();
+		void ClearHistoricalLogs();
+		void ClearTodaysAccess();
+		void LogTodaysAccess(int userId, string logLine);
 	}
 }
