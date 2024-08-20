@@ -420,12 +420,11 @@ namespace ArduinoClient
 			PropertyDescriptor propDesc = TypeDescriptor.GetProperties(typeof(UsuarioDB))["Fecha"];
 			((IBindingList)bindingList).ApplySort(propDesc, ListSortDirection.Ascending);
 		}
-		private void EnviarReporte_Click(object sender, EventArgs e)
-		{
-
-		}
 		private void ingresosDeHOYToolStripMenuItem_Click(object sender, EventArgs e)
 		{
+
+			//logUser("Error", 9);
+
 			var todayAccess = new TodayAccess(_sqliteDataAccess);
 			todayAccess.ShowDialog();
 		}

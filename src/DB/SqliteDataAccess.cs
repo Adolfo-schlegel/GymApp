@@ -113,11 +113,10 @@ namespace ArduinoClient
 				cnn.Open();
 
 				string query = @"
-                SELECT u.Nombre, u.Apellido, i.Log, COUNT(i.id) AS IngresoCount
-                FROM Ingresos i
-                JOIN Usuario u ON i.Usuario_id = u.id
-                GROUP BY u.Nombre, u.Apellido, i.Log
-                ORDER BY u.Nombre, u.Apellido";
+				SELECT u.Nombre, u.Apellido, i.Log, 1 AS IngresoCount
+				FROM Ingresos i
+				JOIN Usuario u ON i.Usuario_id = u.id
+				ORDER BY u.Nombre, u.Apellido, i.Log";
 
 				var result = cnn.Query<UserAccessSummary>(query).ToList();
 				return result;
@@ -126,11 +125,18 @@ namespace ArduinoClient
 	
 		public void LogTodaysAccess(int userId, string logLine)
 		{
-			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+			try
 			{
-				cnn.Open();
-				string query = "UPDATE Ingresos SET Log = IFNULL(Log, '') || @LogLine || char(10) WHERE Usuario_id = @UserId";
-				cnn.Execute(query, new { LogLine = logLine, UserId = userId });
+				using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+				{
+					cnn.Open();
+					string query = "INSERT INTO Ingresos (Log, Usuario_id) VALUES (@LogLine, @UserId)";
+					cnn.Execute(query, new { LogLine = logLine, UserId = userId });
+				}
+			}
+			catch(Exception ex)
+			{
+				Console.WriteLine($"Error: {ex.Message}");
 			}
 		}
 

@@ -33,16 +33,33 @@ namespace ArduinoClient.Forms
 
 			var entries = _sqliteDataAccess.GetTodaysAccessSummary();
 
+			// Limpiar el contenido inicial del TextBox
+			txtRegistro.Text = "";
+
 			entries.ForEach(usuario =>
 			{
 				var content = $"{usuario.Nombre} {usuario.Apellido} {usuario.Log}";
 
-				txtRegistro.Text += "\n" + content;
+				// Añadir cada entrada en una nueva línea
+				txtRegistro.Text += content + Environment.NewLine;
 
-				totalCount = usuario.IngresoCount;
+				// Contar los tipos de entradas
+				if (usuario.Log.Contains("OK"))
+				{
+					okCount++;
+				}
+				else if (usuario.Log.Contains("Error"))
+				{
+					errorCount++;
+				}
+
+				// Acumular el total de ingresos
+				totalCount += usuario.IngresoCount;
 			});
 
-			
+			lblDenegados.Text = errorCount.ToString();
+			lblPermitidos.Text = okCount.ToString();
+			lblTotal.Text = totalCount.ToString();
 		}
 	}
 }
