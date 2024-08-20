@@ -18,23 +18,29 @@ using ArduinoClient.Tools.Arduino;
 using DocumentFormat.OpenXml.Office.CustomUI;
 using ArduinoClient.Forms;
 using Microsoft.Extensions.Logging;
+using ArduinoClient.WorkingService;
 
 namespace ArduinoClient
 {
 	public partial class Cliente : Form
 	{
 		private int ClickedId;
+
 		private Thread Hilo;		
 		private List<UsuarioDB> LstUsers;
 		private UsuarioDB ScannedUser;
+
 		private IArduinoManager _arduinoManager;
 		private ISqliteDataAccess _sqliteDataAccess;
-		public Cliente(IArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess)
+		private IReportSender _reportSender;
+		public Cliente(IArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess, IReportSender reportSender)
 		{			
 			Init();
 			dataGridView2.CellFormatting += dataGridView2_CellFormatting;
-			this._arduinoManager = arduinoManager;
+
+			_arduinoManager = arduinoManager;
 			_sqliteDataAccess = sqliteDataAccess;
+			_reportSender = reportSender;
 		}
 		private void dataGridView2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) => printUserNotUpdated();
 		private void Init()
@@ -173,7 +179,7 @@ namespace ArduinoClient
 		}
 		private void logUser(string status, int userId)
 		{
-			var line = $"{DateTime.Now.ToString("yy/MM/dd - HH:mm")} - {status}";
+			var line = $"{DateTime.Now.ToString("dd/MM/yyyy - HH:mm")} - {status}";
 
 			_sqliteDataAccess.LogHistoricalDateAccessUser(userId, line);
 			_sqliteDataAccess.LogTodaysAccess(userId, line);
@@ -424,8 +430,14 @@ namespace ArduinoClient
 		{
 
 			//logUser("Error", 9);
+			//
+			//logUser("Error", 10);
+			//logUser("OK", 10);
+			//
+			//logUser("Error", 12);
+			//logUser("Error", 12);
 
-			var todayAccess = new TodayAccess(_sqliteDataAccess);
+			var todayAccess = new TodayAccess(_sqliteDataAccess, _reportSender);
 			todayAccess.ShowDialog();
 		}
 	}

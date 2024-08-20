@@ -1,7 +1,9 @@
 ﻿using ArduinoClient.DB;
+using ArduinoClient.WorkingService;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -13,16 +15,23 @@ namespace ArduinoClient.Forms
 {
 	public partial class TodayAccess : Form
 	{
-		ISqliteDataAccess _sqliteDataAccess;
-		public TodayAccess(ISqliteDataAccess sqliteDataAccess)
+		private ISqliteDataAccess _sqliteDataAccess;
+		private IReportSender _reportSender;
+		public TodayAccess(ISqliteDataAccess sqliteDataAccess, IReportSender reportSender)
 		{
 			_sqliteDataAccess = sqliteDataAccess;
+			_reportSender = reportSender;
 			InitializeComponent();
 		}
 
 		private void btnEnviarReporte_Click(object sender, EventArgs e)
 		{
+			string result = _reportSender.SendEmailReport();
 
+			if (result != "OK")
+				MessageBox.Show("Error al enviar reporte, consulte con el tecnico: " + result);
+			else
+				MessageBox.Show($"Reporte Enviado a {ConfigurationManager.AppSettings["Email.To"]}");
 		}
 
 		private void TodayAccess_Load(object sender, EventArgs e)

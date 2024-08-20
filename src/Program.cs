@@ -50,16 +50,16 @@ namespace ArduinoClient
 				new EmailSender(
 					smtpHost: "smtp.gmail.com",
 					smtpPort: 587,
-					smtpUser: "crosspablo23@gmail.com", 
+					smtpUser: ConfigurationManager.AppSettings["Email.From"], 
 					smtpPass: "fghmesdmyzgpqefv", 
 					enableSsl: true
 				)
 			);
 			services.AddSingleton<IFileLogger, FileLogger>(provider => 
-			new FileLogger(@"C:\TEMP\logs", "DailyWorkerLogFile") { TypeLogger = TypeLogger.DailyWorker });
+			new FileLogger(ConfigurationManager.AppSettings["Log.Folder"], "DailyWorkerLogFile") { TypeLogger = TypeLogger.DailyWorker });
 
 			services.AddSingleton<IFileLogger, FileLogger>(provider =>
-			new FileLogger(@"C:\TEMP\logs", "ReportSenderLogFile") { TypeLogger = TypeLogger.ReportSender });
+			new FileLogger(ConfigurationManager.AppSettings["Log.Folder"], "ReportSenderLogFile") { TypeLogger = TypeLogger.ReportSender });
 
 			services.AddSingleton(provider => new SerialPort
 			{
