@@ -46,10 +46,10 @@ namespace ArduinoClient
 			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
 			{
 				cnn.Open();
-				cnn.Execute("update Usuario set Codigo = @Codigo, Nombre = @Nombre, Apellido = @Apellido, Documento = @Documento, Sexo = @Sexo, Celular = @Celular, MedioPago = @MedioPago, Fecha = @Fecha, Monto = @Monto, Correo = @Correo, EstadoCorreo = @EstadoCorreo where Id = @Id", user);
+				//cnn.Execute("update Usuario set Codigo = @Codigo, Nombre = @Nombre, Apellido = @Apellido, Documento = @Documento, Sexo = @Sexo, Celular = @Celular, MedioPago = @MedioPago, Fecha = @Fecha, Monto = @Monto, Correo = @Correo, EstadoCorreo = @EstadoCorreo where Id = @Id", user);
 
 				//Comentar esta linea para que no se pueda modificar el Log desde el texbox
-				//cnn.Execute("update Usuario set Codigo = @Codigo, Nombre = @Nombre, Apellido = @Apellido, Documento = @Documento, Sexo = @Sexo, Celular = @Celular, MedioPago = @MedioPago, Fecha = @Fecha, Monto = @Monto, Correo = @Correo, EstadoCorreo = @EstadoCorreo, Log = @Log where Id = @Id", user);
+				cnn.Execute("update Usuario set Codigo = @Codigo, Nombre = @Nombre, Apellido = @Apellido, Documento = @Documento, Sexo = @Sexo, Celular = @Celular, MedioPago = @MedioPago, Fecha = @Fecha, Monto = @Monto, Correo = @Correo, EstadoCorreo = @EstadoCorreo, Log = @Log where Id = @Id", user);
 			}
 		}
 		public void UpdateQuota(UsuarioDB user)
@@ -123,8 +123,6 @@ namespace ArduinoClient
 				return result;
 			}
 		}
-
-		// Otros métodos...
 	
 		public void LogTodaysAccess(int userId, string logLine)
 		{
