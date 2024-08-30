@@ -5,6 +5,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace ArduinoClient.Tools.Email
 {
@@ -34,6 +35,12 @@ namespace ArduinoClient.Tools.Email
 		// Método para enviar el correo
 		public string SendEmail(string fromAddress, string toAddress, string subject, string body)
 		{
+			return SendEmailWithAttachment(fromAddress, toAddress, subject, body, null);
+		}
+
+		// Método para enviar el correo con adjunto
+		public string SendEmailWithAttachment(string fromAddress, string toAddress, string subject, string body, string attachmentPath)
+		{
 			var res = "OK";
 			try
 			{
@@ -42,6 +49,13 @@ namespace ArduinoClient.Tools.Email
 				mail.To.Add(toAddress);
 				mail.Subject = subject;
 				mail.Body = body;
+
+				// Verifica si se debe adjuntar un archivo
+				if (!string.IsNullOrEmpty(attachmentPath) && File.Exists(attachmentPath))
+				{
+					Attachment attachment = new Attachment(attachmentPath);
+					mail.Attachments.Add(attachment);
+				}
 
 				using (SmtpClient smtpClient = new SmtpClient(SmtpHost, SmtpPort))
 				{

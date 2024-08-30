@@ -120,17 +120,7 @@ namespace ArduinoClient.WorkingService
 				_logger.Log($"{DateTime.Now} Error in ExecuteJobs: " + ex.Message);
 			}
 		}
-		//private void ResetTimer()
-		//{
-		//	try
-		//	{
-		//		_timer?.Change(TimeSpan.Zero, TimeSpan.FromMinutes(1)); // Reiniciar el temporizador
-		//	}
-		//	catch (Exception ex)
-		//	{
-		//		_logger.Log("Error in ResetTimer: " + ex.Message);
-		//	}
-		//}
+
 		public void Stop()
 		{
 			try
@@ -141,11 +131,6 @@ namespace ArduinoClient.WorkingService
 			{
 				_logger.Log($"{DateTime.Now} Error in Stop: " + ex.Message);
 			}
-		}
-
-		public void Dispose()
-		{
-			_timer?.Dispose();
 		}
 	}
 }

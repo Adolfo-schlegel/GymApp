@@ -33,7 +33,8 @@ namespace ArduinoClient
 		private IArduinoManager _arduinoManager;
 		private ISqliteDataAccess _sqliteDataAccess;
 		private IReportSender _reportSender;
-		public Cliente(IArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess, IReportSender reportSender)
+		private IExcelManager _excelManager;
+		public Cliente(IArduinoManager arduinoManager, ISqliteDataAccess sqliteDataAccess, IReportSender reportSender, IExcelManager excelManager)
 		{			
 			Init();
 			dataGridView2.CellFormatting += dataGridView2_CellFormatting;
@@ -41,6 +42,7 @@ namespace ArduinoClient
 			_arduinoManager = arduinoManager;
 			_sqliteDataAccess = sqliteDataAccess;
 			_reportSender = reportSender;
+			_excelManager = excelManager;
 		}
 		private void dataGridView2_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e) => printUserNotUpdated();
 		private void Init()
@@ -347,13 +349,13 @@ namespace ArduinoClient
 
 					try
 					{
-						ExcelManager excelManager = new ExcelManager();
+						var date = DateTime.Now.ToString("dd-MM-yyyy");
 
-						excelManager.AddSheet($"Gym - {DateTime.Now.ToString("dd-MM-yyyy")}");
+						_excelManager.AddSheet($"Gym - {date}");
 
-						excelManager.AddItems(LstUsers);
+						_excelManager.AddItems(LstUsers);
 
-						excelManager.SaveAs(directoryPath);
+						_excelManager.SaveAs(directoryPath + @"\" + "RegistroGym - " + date);
 
 						MessageBox.Show("Archivo guardado exitosamente en: " + directoryPath);
 					}

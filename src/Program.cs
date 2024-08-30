@@ -68,6 +68,7 @@ namespace ArduinoClient
 			});
 			
 			services.AddSingleton<IArduinoManager, ArduinoManager>();
+			services.AddSingleton<IExcelManager, ExcelManager>();
 			services.AddSingleton<IDailyWorker,DailyWorker>();
 			services.AddTransient<Cliente>();
 		});

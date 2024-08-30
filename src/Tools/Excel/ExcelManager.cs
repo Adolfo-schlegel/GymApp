@@ -8,7 +8,21 @@ using System.Linq;
 
 namespace ArduinoClient.Tools
 {
-	public class ExcelManager
+	public interface IExcelManager
+	{
+		void AddSheet(string sheetName);
+		void AddItems(List<UsuarioDB> items);
+		void PrintRowInRed(int row);
+		void PrintRowInblue(int row);
+		void Calculate(string cell, string formula);
+		void SetStyleByRange(System.Drawing.Color bkgrColor, System.Drawing.Color fontColor, int fontSize, bool blod = true, bool italic = false, string range = "A1:D1");
+		void SetStyleSheet(System.Drawing.Color bkgrColor, System.Drawing.Color fontColor, int fontSize, bool blod = true, bool italic = false);
+		void SelectWorksheetByName(string sheetName);
+		string ImportFromCsv(string csvFilePath, string csvFileName, char separator, bool header = true);
+		void SaveAs(string path);
+	}
+
+	public class ExcelManager : IExcelManager
 	{
 		XLWorkbook workbook;
 		IXLWorksheet worksheet;
@@ -124,23 +138,7 @@ namespace ArduinoClient.Tools
 		public void SaveAs(string path)
 		{
 
-			workbook.SaveAs(path + @"\" + GetLogFileName());
-		}
-		private string GetLogFileName()
-		{
-			return "RegistroGym - " + DateTime.Now.ToString("yyyy-MM-dd") + ".xlsx";
+			workbook.SaveAs(path + ".xlsx");
 		}
 	}
-	public class Head
-	{
-		public string Cell { get; set; }
-		public string Value { get; set; }
-	}
-	public class Item
-	{
-		public string Value { get; set; }
-		public string Cell { get; set; }
-	}
-
-	
 }
