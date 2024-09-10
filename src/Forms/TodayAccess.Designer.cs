@@ -134,7 +134,7 @@
 			this.btnEnviarReporte.Text = "Enviar Reporte";
 			this.btnEnviarReporte.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(70)))), ((int)(((byte)(70)))), ((int)(((byte)(70)))));
 			this.btnEnviarReporte.UseVisualStyleBackColor = false;
-			this.btnEnviarReporte.Click += new System.EventHandler(this.btnEnviarReporte_Click);
+			this.btnEnviarReporte.Click += new System.EventHandler(this.btnEnviarReporte_ClickAsync);
 			// 
 			// TodayAccess
 			// 

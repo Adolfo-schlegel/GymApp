@@ -44,7 +44,7 @@ namespace ArduinoClient.WorkingService
 
 				ExecutionInterval = string.IsNullOrEmpty(executionInterval)
 					? (TimeSpan?)null
-					: TimeSpan.FromHours(Convert.ToDouble(executionInterval));
+					: TimeSpan.FromMinutes(Convert.ToDouble(executionInterval));
 			}
 			catch(Exception ex)
 			{
@@ -54,9 +54,9 @@ namespace ArduinoClient.WorkingService
 		}
 		public void StartWorking()
 		{
-			var thread = new Thread(() =>
+			var thread = new Thread(async () =>
 			{
-				_timer = new Timer(CheckTimeAndExecute, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
+				_timer = new Timer(CheckTimeAndExecuteAsync, null, TimeSpan.Zero, TimeSpan.FromMinutes(1));
 			})
 			{
 				Name = "DailyWorkerThread",
@@ -67,7 +67,7 @@ namespace ArduinoClient.WorkingService
 			_logger.Log($"{DateTime.Now} DailyWorker starting.\n");
 		}
 		
-		private void CheckTimeAndExecute(object state)
+		private void CheckTimeAndExecuteAsync(object state)
 		{
 			try
 			{
@@ -79,7 +79,15 @@ namespace ArduinoClient.WorkingService
 					var executionDateTime = currentTime.Date + ExecutionTime.Value;
 					if (currentTime >= executionDateTime && currentTime - _lastExecutionTime >= TimeSpan.FromDays(1))
 					{
-						ExecuteJobs();
+						// Ejecutar el trabajo de manera segura
+						ExecuteJobsAsync().ContinueWith(task =>
+						{
+							if (task.IsFaulted)
+							{
+								// Manejar cualquier excepción ocurrida en la tarea
+								_logger.Log($"{DateTime.Now} Error in ExecuteJobsAsync: {task.Exception?.GetBaseException().Message}");
+							}
+						});
 						_lastExecutionTime = currentTime;
 					}
 				}
@@ -89,7 +97,15 @@ namespace ArduinoClient.WorkingService
 				{
 					if (currentTime - _lastExecutionTime >= ExecutionInterval.Value)
 					{
-						ExecuteJobs();
+						// Ejecutar el trabajo de manera segura
+						ExecuteJobsAsync().ContinueWith(task =>
+						{
+							if (task.IsFaulted)
+							{
+								// Manejar cualquier excepción ocurrida en la tarea
+								_logger.Log($"{DateTime.Now} Error in ExecuteJobsAsync: {task.Exception?.GetBaseException().Message}");
+							}
+						});
 						_lastExecutionTime = currentTime;
 					}
 				}
@@ -99,19 +115,19 @@ namespace ArduinoClient.WorkingService
 				_logger.Log($"{DateTime.Now} Error in CheckTimeAndExecute: " + ex.Message);
 			}
 		}
-		public void ExecuteJobs()
+		public async Task ExecuteJobsAsync()
 		{
 			try
 			{
 				_logger.Log($"{DateTime.Now} Executing task at: " + DateTime.Now);
 
-				var diskResult = _reportSender.SendToDisk();
-				var emailResult = _reportSender.SendEmailReport();
-				var googleDriveResult = _reportSender.SendGoogleDriveReport();
+				var diskResult = await _reportSender.SendToDiskAsync();
+				var emailResult = await _reportSender.SendEmailReportAsync();
+				//var googleDriveResult = _reportSender.SendGoogleDriveReport();
 
 				_logger.Log($"{DateTime.Now} SendToDisk result -> " + diskResult);
 				_logger.Log($"{DateTime.Now} SendEmailReport result -> " + emailResult);
-				_logger.Log($"{DateTime.Now} SendGoogleDriveReport result -> " + googleDriveResult);
+				//_logger.Log($"{DateTime.Now} SendGoogleDriveReport result -> " + googleDriveResult);
 
 				_logger.Log($"{DateTime.Now} <<-End task\n");
 			}

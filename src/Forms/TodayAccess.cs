@@ -24,9 +24,9 @@ namespace ArduinoClient.Forms
 			InitializeComponent();
 		}
 
-		private void btnEnviarReporte_Click(object sender, EventArgs e)
+		private async void btnEnviarReporte_ClickAsync(object sender, EventArgs e)
 		{
-			string result = _reportSender.SendEmailReport();
+			string result = await _reportSender.SendEmailReportAsync();
 
 			if (result != "OK")
 				MessageBox.Show("Error al enviar reporte, consulte con el tecnico: " + result);

@@ -351,11 +351,13 @@ namespace ArduinoClient
 					{
 						var date = DateTime.Now.ToString("dd-MM-yyyy");
 
+						_excelManager.Initialize();
+
 						_excelManager.AddSheet($"Gym - {date}");
 
 						_excelManager.AddItems(LstUsers);
 
-						_excelManager.SaveAs(directoryPath + @"\" + "RegistroGym - " + date);
+						_excelManager.SaveAs(directoryPath);
 
 						MessageBox.Show("Archivo guardado exitosamente en: " + directoryPath);
 					}
@@ -431,13 +433,13 @@ namespace ArduinoClient
 		private void ingresosDeHOYToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 
-			//logUser("Error", 9);
-			//
-			//logUser("Error", 10);
-			//logUser("OK", 10);
-			//
-			//logUser("Error", 12);
-			//logUser("Error", 12);
+			logUser("Error", 9);
+			
+			logUser("Error", 10);
+			logUser("OK", 10);
+			
+			logUser("Error", 12);
+			logUser("Error", 12);
 
 			var todayAccess = new TodayAccess(_sqliteDataAccess, _reportSender);
 			todayAccess.ShowDialog();

@@ -8,9 +8,9 @@ namespace ArduinoClient.WorkingService
 {
 	public interface IReportSender
 	{
-		string SendEmailReport();
+		Task<string> SendEmailReportAsync();
 		string SendGoogleDriveReport();
-		string SendToDisk();
+		Task<string> SendToDiskAsync();
 
 		//void SendSmsReport();
 	}

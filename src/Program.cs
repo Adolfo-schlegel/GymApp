@@ -48,10 +48,10 @@ namespace ArduinoClient
 		
 			services.AddTransient<IEmailSender>(provider =>
 				new EmailSender(
-					smtpHost: "smtp.gmail.com",
-					smtpPort: 587,
+					smtpHost: ConfigurationManager.AppSettings["Email.smtpHost"],
+					smtpPort: int.Parse(ConfigurationManager.AppSettings["Email.smtpPort"]),
 					smtpUser: ConfigurationManager.AppSettings["Email.From"], 
-					smtpPass: "fghmesdmyzgpqefv", 
+					smtpPass: ConfigurationManager.AppSettings["Email.smtpPass"], 
 					enableSsl: true
 				)
 			);

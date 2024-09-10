@@ -11,7 +11,8 @@ namespace ArduinoClient.Tools.Email
 {
 	public interface IEmailSender
 	{
-		string SendEmail(string fromAddress, string toAddress, string subject, string body);
+		Task<string> SendEmailAsync(string fromAddress, string toAddress, string subject, string body);
+		Task<string> SendEmailWithAttachmentAsync(string fromAddress, string toAddress, string subject, string body, string file);
 	}
 	public class EmailSender : IEmailSender
 	{
@@ -33,13 +34,13 @@ namespace ArduinoClient.Tools.Email
 		}
 
 		// Método para enviar el correo
-		public string SendEmail(string fromAddress, string toAddress, string subject, string body)
+		public async Task<string> SendEmailAsync(string fromAddress, string toAddress, string subject, string body)
 		{
-			return SendEmailWithAttachment(fromAddress, toAddress, subject, body, null);
+			return await SendEmailWithAttachmentAsync(fromAddress, toAddress, subject, body, null);
 		}
 
 		// Método para enviar el correo con adjunto
-		public string SendEmailWithAttachment(string fromAddress, string toAddress, string subject, string body, string attachmentPath)
+		public async Task<string> SendEmailWithAttachmentAsync(string fromAddress, string toAddress, string subject, string body, string file)
 		{
 			var res = "OK";
 			try
@@ -51,9 +52,9 @@ namespace ArduinoClient.Tools.Email
 				mail.Body = body;
 
 				// Verifica si se debe adjuntar un archivo
-				if (!string.IsNullOrEmpty(attachmentPath) && File.Exists(attachmentPath))
+				if (!string.IsNullOrEmpty(file) && File.Exists(file))
 				{
-					Attachment attachment = new Attachment(attachmentPath);
+					Attachment attachment = new Attachment(file);
 					mail.Attachments.Add(attachment);
 				}
 
@@ -61,7 +62,7 @@ namespace ArduinoClient.Tools.Email
 				{
 					smtpClient.Credentials = new NetworkCredential(SmtpUser, SmtpPass);
 					smtpClient.EnableSsl = EnableSsl;
-					smtpClient.Send(mail);
+					await smtpClient.SendMailAsync(mail);
 				}
 			}
 			catch (Exception ex)

@@ -20,6 +20,8 @@ namespace ArduinoClient.Tools
 		void SelectWorksheetByName(string sheetName);
 		string ImportFromCsv(string csvFilePath, string csvFileName, char separator, bool header = true);
 		void SaveAs(string path);
+		void RemoveSheet(string sheetName);
+		void Initialize();
 	}
 
 	public class ExcelManager : IExcelManager
@@ -27,6 +29,10 @@ namespace ArduinoClient.Tools
 		XLWorkbook workbook;
 		IXLWorksheet worksheet;
 		public ExcelManager()
+		{
+			workbook = new XLWorkbook();
+		}
+		public void Initialize()
 		{
 			workbook = new XLWorkbook();
 		}
@@ -134,11 +140,17 @@ namespace ArduinoClient.Tools
 
 			return "OK";
 		}
-
+		public void RemoveSheet(string sheetName)
+		{
+			var sheet = workbook.Worksheets.FirstOrDefault(ws => ws.Name == sheetName);
+			if (sheet != null)
+			{
+				workbook.Worksheets.Delete(sheetName);
+			}
+		}
 		public void SaveAs(string path)
 		{
-
-			workbook.SaveAs(path + ".xlsx");
+			workbook.SaveAs(path);
 		}
 	}
 }

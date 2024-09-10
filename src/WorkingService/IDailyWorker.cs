@@ -13,6 +13,6 @@ namespace ArduinoClient.WorkingService
 
 		void StartWorking();
 		void Stop();
-		void ExecuteJobs();
+		Task ExecuteJobsAsync();
 	}
 }

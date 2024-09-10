@@ -20,6 +20,7 @@ namespace ArduinoClient.WorkingService
 		ISqliteDataAccess _sqliteDataAccess;
 		IEmailSender _emailSender;
 		IExcelManager _excelManager;
+		private string excelFile = ConfigurationManager.AppSettings["Excel.File"];
 		public ReportSender(IEnumerable<IFileLogger> logger, ISqliteDataAccess sqliteDataAccess, IEmailSender emailSender, IExcelManager excelManager) 
 		{
 			_excelManager = excelManager;
@@ -27,12 +28,12 @@ namespace ArduinoClient.WorkingService
 			_sqliteDataAccess = sqliteDataAccess;
 			_logger = logger.Where(x => x.TypeLogger == TypeLogger.ReportSender).First();
 		}
-		public string SendEmailReport()
+		public async Task<string> SendEmailReportAsync()
 		{
 			string result = "OK";
 			string emailFrom = ConfigurationManager.AppSettings["Email.From"];
 			string emailTo = ConfigurationManager.AppSettings["Email.To"];
-			string date = DateTime.Now.ToString("dd/MM/yyyy - HH:mm");
+			var date = DateTime.Now.ToString("dd-MM-yyyy");
 			var entries = _sqliteDataAccess.GetTodaysAccessSummary();
 			
 			if (entries.Count > 0)
@@ -50,7 +51,7 @@ namespace ArduinoClient.WorkingService
 
 				_sqliteDataAccess.ClearTodaysAccess();
 
-				result = _emailSender.SendEmail(emailFrom, emailTo, $"{totalIngresos} Ingresos de hoy {date}", message);
+				result = await _emailSender.SendEmailWithAttachmentAsync(emailFrom, emailTo, $"{totalIngresos} Ingresos de hoy {date}", message, (excelFile));
 			}
 			else			
 				result = "Las entidades fueron 0 al enviar el mail";
@@ -64,32 +65,40 @@ namespace ArduinoClient.WorkingService
 			return "OK";
 		}
 
-		public string SendToDisk()
+		public async Task<string> SendToDiskAsync()
 		{
 			string res = "OK";
-			string path = ConfigurationManager.AppSettings["Log.Folder"];
 
-			var entries = _sqliteDataAccess.LoadPeople();
+			// Asumimos que LoadPeople devuelve una lista de manera síncrona.
+			var entries = await Task.Run(() => _sqliteDataAccess.LoadPeople());
 
-			if (entries.Count < 0) { return "Las entidades fueron 0 al guardar el archivo"; }
+			if (entries.Count == 0)
+			{
+				return "Las entidades fueron 0 al guardar el archivo";
+			}
 
 			try
 			{
 				var date = DateTime.Now.ToString("dd-MM-yyyy");
 
-				_excelManager.AddSheet($"Gym - {date}");
+				await Task.Run(() =>
+				{
+					_excelManager.Initialize();
+					_excelManager.AddSheet($"Gym - {date}");
+					_excelManager.AddItems(entries);
+					_excelManager.SaveAs(excelFile);
+					//_excelManager.RemoveSheet($"Gym - {date}");
+				});
 
-				_excelManager.AddItems(entries);
-
-				_excelManager.SaveAs(path + @"\" + "RegistroGym - " + date);
-
-				res = "Archivo guardado exitosamente en: " + path;
+				res = "Archivo guardado exitosamente en: " + excelFile + date;
 			}
 			catch (Exception ex)
 			{
 				res = "Error al guardar el archivo: " + ex.Message;
 			}
+
 			return res;
 		}
+
 	}
 }
