@@ -3,21 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using System.IO.Ports;
 using ArduinoClient.Models;
 using ArduinoClient.Tools;
-using DocumentFormat.OpenXml.Office2013.Drawing.Chart;
-using DocumentFormat.OpenXml.EMMA;
-using System.IO;
 using System.Text.RegularExpressions;
-using DocumentFormat.OpenXml.Spreadsheet;
 using System.ComponentModel;
 using ArduinoClient.Extensions;
 using ArduinoClient.DB;
 using ArduinoClient.Tools.Arduino;
-using DocumentFormat.OpenXml.Office.CustomUI;
 using ArduinoClient.Forms;
-using Microsoft.Extensions.Logging;
 using ArduinoClient.WorkingService;
 
 namespace ArduinoClient
@@ -68,17 +61,11 @@ namespace ArduinoClient
 		}
 		private void openDoor()
 		{			
-			string result = _arduinoManager.WriteToSerialPort("E");
-			
-			if(result != "OK")
-				MessageBox.Show(result);			
+			_arduinoManager.WriteToSerialPort("E");						
 		}
 		private void closeDoor()
 		{
-
-			string result = _arduinoManager.WriteToSerialPort("X");
-			if (result != "OK")
-				MessageBox.Show(result);
+			 _arduinoManager.WriteToSerialPort("X");
 		}
 		private void refreshGrid()
 		{
@@ -407,6 +394,20 @@ namespace ArduinoClient
 		}
 		private void dataGridView2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
 		{
+			//var columnIndex = e.ColumnIndex;
+			//var column = dataGridView2.Columns[columnIndex];
+
+			//PropertyDescriptor propDesc = TypeDescriptor.GetProperties(typeof(UsuarioDB))[column.DataPropertyName];
+
+			//ListSortDirection direction = ListSortDirection.Descending;
+			//if (dataGridView2.SortOrder == SortOrder.Descending)
+			//{
+			//	direction = ListSortDirection.Ascending;
+			//}
+
+
+			//((IBindingList)dataGridView2.DataSource).ApplySort(propDesc, direction);
+
 			var columnIndex = e.ColumnIndex;
 			var column = dataGridView2.Columns[columnIndex];
 
@@ -418,8 +419,18 @@ namespace ArduinoClient
 				direction = ListSortDirection.Ascending;
 			}
 
+			// Convertir la lista a BindingList para aplicar la ordenación
+			var dataSource = dataGridView2.DataSource as List<UsuarioDB>;
+			if (dataSource != null)
+			{
+				var bindingList = new BindingList<UsuarioDB>(dataSource);
+				var sortedList = new BindingList<UsuarioDB>(bindingList.ToList());
 
-			((IBindingList)dataGridView2.DataSource).ApplySort(propDesc, direction);
+				((IBindingList)sortedList).ApplySort(propDesc, direction);
+
+				// Asignar la lista ordenada de nuevo al DataGridView
+				dataGridView2.DataSource = sortedList;
+			}
 
 		}
 		private void btnGroupDeudores_Click(object sender, EventArgs e)
@@ -433,13 +444,13 @@ namespace ArduinoClient
 		private void ingresosDeHOYToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 
-			logUser("Error", 9);
+			//logUser("Error", 9);
 			
-			logUser("Error", 10);
-			logUser("OK", 10);
+			//logUser("Error", 10);
+			//logUser("OK", 10);
 			
-			logUser("Error", 12);
-			logUser("Error", 12);
+			//logUser("Error", 12);
+			//logUser("Error", 12);
 
 			var todayAccess = new TodayAccess(_sqliteDataAccess, _reportSender);
 			todayAccess.ShowDialog();

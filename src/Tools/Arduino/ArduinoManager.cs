@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.IO.Ports;
 using System.Threading;
 using System.Windows.Forms;
@@ -30,26 +31,29 @@ namespace ArduinoClient.Tools
 			InitThread();			
 			StartReading();
 		}
-		public string WriteToSerialPort(string data)
+		public void WriteToSerialPort(string data)
 		{
-			string lstResult = "OK";
-
-			if (_serialPort != null && _serialPort.IsOpen)
+			try
 			{
-				try
+				if (_serialPort != null && _serialPort.IsOpen)
 				{
 					_serialPort.WriteLine(data);
 				}
-				catch (Exception ex)
+				else
 				{
-					lstResult = $"Error writing to serial port: {ex.Message}";
+					Console.WriteLine("Serial port is not open.");
 				}
 			}
-			else
+			catch (IOException ioex)
 			{
-				lstResult = "Serial port is not open.";
+				Console.WriteLine($"Error writing to serial port (IO exception): {ioex.Message}");
+				// Intentar reabrir el puerto si ocurre una desconexión
+				ReopenArduinoPort();
 			}
-			return lstResult;
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error writing to serial port: {ex.Message}");
+			}
 		}
 		public void OpenPort()
 		{
@@ -57,6 +61,10 @@ namespace ArduinoClient.Tools
 			{
 				_serialPort.Open();
 				Console.WriteLine("Puerto Arduino abierto correctamente.");
+			}
+			else
+			{
+				Console.WriteLine("Puerto Arduino NO abierto correctamente.");
 			}
 		}
 
@@ -66,6 +74,10 @@ namespace ArduinoClient.Tools
 			{
 				_serialPort.Close();
 				Console.WriteLine("Puerto Arduino cerrado correctamente.");
+			}
+			else
+			{
+				Console.WriteLine("Puerto Arduino NO cerrado correctamente.");
 			}
 		}
 
@@ -118,15 +130,15 @@ namespace ArduinoClient.Tools
 			}
 			catch (TimeoutException tex)
 			{
-				MessageBox.Show("Tiempo de espera excedido al comunicarse con el Arduino: " + tex.Message);
+				Console.WriteLine("Tiempo de espera excedido al comunicarse con el Arduino: " + tex.Message);
 			}
 			catch (UnauthorizedAccessException uex)
 			{
-				MessageBox.Show("Acceso denegado al puerto COM: " + uex.Message);
+				Console.WriteLine("Acceso denegado al puerto COM: " + uex.Message);
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Error al inicializar el puerto Arduino: " + ex.Message);
+				Console.WriteLine("Error al inicializar el puerto Arduino: " + ex.Message);
 			}
 		}
 		public void StartReading()
@@ -138,6 +150,7 @@ namespace ArduinoClient.Tools
 					reading = true;
 					if (_readThread == null || !_readThread.IsAlive)
 					{
+						Console.WriteLine("StartReading");
 						InitThread(); // Crea un nuevo hilo antes de iniciarlo
 						_readThread.Start();
 					}
@@ -162,26 +175,26 @@ namespace ArduinoClient.Tools
 		private void ReopenArduinoPort()
 		{
 			CloseArduinoPort();  // Asegura que el puerto esté cerrado antes de intentar reabrirlo
-
 			for (int attempt = 0; attempt < 5; attempt++)
 			{
 				try
 				{
-					_serialPort.Open();
-					Console.WriteLine("Puerto Arduino reabierto correctamente.");
-					StartReading();
-					suspendEvent.Reset(); // Reanuda el hilo reiniciando el evento
-					resumeEvent.Set(); // Señala que el sistema ha reanudado
-					break;
+					if (!_serialPort.IsOpen)
+					{
+						_serialPort.Open();
+						Console.WriteLine("Puerto Arduino reabierto correctamente.");
+						StartReading();
+						break;
+					}
 				}
 				catch (UnauthorizedAccessException)
 				{
 					Console.WriteLine("Acceso denegado al puerto COM. Reintentando...");
-					Thread.Sleep(1000); // Espera antes de reintentar
+					Thread.Sleep(500);
 				}
-				catch (Exception ex)
+				catch (IOException ioex)
 				{
-					Console.WriteLine("Error reabriendo el puerto Arduino: " + ex.Message);
+					Console.WriteLine("Error I/O al intentar reabrir el puerto: " + ioex.Message);
 					break;
 				}
 			}
@@ -206,22 +219,21 @@ namespace ArduinoClient.Tools
 					if (suspendEvent.WaitOne(0))
 					{
 						Console.WriteLine("El hilo se quedo en espera...");
+
 						suspendEvent.WaitOne(); // Espera hasta que se limpie el evento de suspensión
 					}
 
 					if (!reading) break;//Si no esta leyendo rompe el bucle
 
 					if (_serialPort != null && _serialPort.IsOpen && _serialPort.BytesToRead > 0)
-					{
-						Console.WriteLine("Leyendo datos desde el Arduino...");
+					{						
 						string data = _serialPort.ReadLine();
-
-						var line = data.Contains("Card UID:") ? data.Trim() : null;
-
 						lock (queueLock)
 						{
-							receivedDataQueue.Enqueue(line);
+							Console.WriteLine($"CODIGO-> {data}");
+							receivedDataQueue.Enqueue(data.Trim());
 						}
+						Thread.Sleep(100);					
 					}
 					else
 					{
@@ -229,13 +241,18 @@ namespace ArduinoClient.Tools
 					}
 				}
 			}
-			catch (TimeoutException ex)
+			catch (IOException ioex)
 			{
-				MessageBox.Show("Error en ReadArduinoData TIMEOUT: " + ex.Message);
+				Console.WriteLine("Excepción de IO en ReadArduinoData: " + ioex.Message);
+				ReopenArduinoPort(); // Intentar reabrir el puerto
+			}
+			catch (TimeoutException tex)
+			{
+				Console.WriteLine("Tiempo de espera en la lectura de datos: " + tex.Message);
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show("Error en ReadArduinoData: " + ex.Message);
+				Console.WriteLine("Excepción en ReadArduinoData: " + ex.Message);
 			}
 		}
 		public string GetNextReceivedData()

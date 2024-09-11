@@ -6,7 +6,8 @@
 
 const int buzzer = 7; 
 const int relay = 8;
-
+String lastUID = "";  // Variable to almacenar el último UID leído
+bool cardDetected = false;  // Indicador para saber si una tarjeta ha sido detectada
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 
@@ -29,14 +30,36 @@ void loop() {
 
 void handleRFID() {
   // Verificar si hay una tarjeta RFID presente
-  if (mfrc522.PICC_IsNewCardPresent()) {
-    // Leer la tarjeta y realizar las operaciones necesarias
-    if (mfrc522.PICC_ReadCardSerial()) {
-      mfrc522.PICC_DumpToSerial(&(mfrc522.uid));
-      Serial.println(ReadMfrc());
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    String currentUID = "";
+    
+    // Leer el UID y formatearlo correctamente
+    for (byte i = 0; i < mfrc522.uid.size; i++) {
+      currentUID += String(mfrc522.uid.uidByte[i], HEX);
+      if (i < mfrc522.uid.size - 1) {
+        currentUID += " ";  // Añadir espacio entre bytes
+      }
+    }
+
+    currentUID.toUpperCase();  // Convertir a mayúsculas para legibilidad
+
+    // Verificar si el UID es diferente al último leído
+    if (currentUID != lastUID) {
+      lastUID = currentUID;  // Actualizar el último UID leído
+      cardDetected = true;   // Marcar que se detectó una tarjeta
+      Serial.println("Card UID: " + currentUID);
+      
+      delay(1000);  // Evitar lecturas repetidas en menos de un segundo
     }
   }
+
+  // Reiniciar cuando la tarjeta ya no está presente
+  if (!mfrc522.PICC_IsNewCardPresent() && cardDetected) {
+    lastUID = "";  // Restablecer el UID
+    cardDetected = false;  // Reiniciar la detección
+  }
 }
+
 
 void handleSerialCommands() {
   // Verificar si hay datos disponibles en el puerto serial

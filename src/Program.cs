@@ -64,7 +64,13 @@ namespace ArduinoClient
 			services.AddSingleton(provider => new SerialPort
 			{
 				PortName = ConfigurationManager.AppSettings["PuertoCOM"],
-				BaudRate = 9600
+				BaudRate = 9600,
+				ReadTimeout = 500, 
+				WriteTimeout = 500,
+				DataBits = 8,
+				Parity = Parity.None,
+				StopBits = StopBits.One,
+				ReadBufferSize = 4096
 			});
 			
 			services.AddSingleton<IArduinoManager, ArduinoManager>();
