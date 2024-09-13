@@ -12,6 +12,7 @@ using ArduinoClient.DB;
 using ArduinoClient.Tools.Arduino;
 using ArduinoClient.Forms;
 using ArduinoClient.WorkingService;
+using DocumentFormat.OpenXml.EMMA;
 
 namespace ArduinoClient
 {
@@ -59,14 +60,9 @@ namespace ArduinoClient
 			LstUsers = _sqliteDataAccess.LoadPeople();
 			return LstUsers;
 		}
-		private void openDoor()
-		{			
-			_arduinoManager.WriteToSerialPort("E");						
-		}
-		private void closeDoor()
-		{
-			 _arduinoManager.WriteToSerialPort("X");
-		}
+		private void openDoor()=>_arduinoManager.WriteToSerialPort("E");								
+		private void closeDoor() => _arduinoManager.WriteToSerialPort("X");
+		
 		private void refreshGrid()
 		{
 			LstUsers = getUsers();
@@ -81,38 +77,59 @@ namespace ArduinoClient
 				{
 					dataGridView2.DataSource = null;
 					dataGridView2.DataSource = bindingList;
-				}));
-
-			printUserNotUpdated();
+					printUserNotUpdated();
+				}));						
 		}
 		private void printUserNotUpdated()
 		{
-			foreach (DataGridViewRow row in dataGridView2.Rows)
+			try
 			{
-				var user = (UsuarioDB)row.DataBoundItem;
-
-				if (!user.isUpToDate())
+				foreach (DataGridViewRow row in dataGridView2.Rows)
 				{
-					row.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(255,121,121);
-					row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
+					var user = (UsuarioDB)row.DataBoundItem;
+					if (!user.isUpToDate())
+					{
+						row.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(255, 121, 121);
+						row.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
+					}
 				}
+			}
+			catch (ArgumentException ex)
+			{
+				MessageBox.Show("Error al actualizar el estilo de la celda: " + ex.Message);
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Error al actualizar el estilo de la celda: " + ex.Message);
 			}
 		}
 		private void setUserInfo()
 		{
-			btnAtualizarCuota.Visible = false;
-			btnAgregar.Visible = false;
-			lblId.Text = ScannedUser.Id.ToString();
-			lblNombre.Text = ScannedUser.Nombre;
-			lblApellido.Text = ScannedUser.Apellido;
-			lblCelular.Text = ScannedUser.Celular.ToString();
-			lblDocumento.Text = ScannedUser.Documento.ToString();
-			lblMonto.Text = ScannedUser.Monto.ToString();
-			lblMedio.Text = ScannedUser.MedioPago;
-			lblSexo.Text = ScannedUser.Sexo;
-			lblFecha.Text = ScannedUser.Fecha.ToString();
-			lblDaysLeft.Text = ScannedUser.daysLeft().ToString();
-			lblCodigo.Text = ScannedUser.Codigo;
+			try
+			{
+				lblId.Invoke(new MethodInvoker(delegate {
+					if (ScannedUser != null)
+					{
+						btnAtualizarCuota.Visible = false;
+						btnAgregar.Visible = false;
+						lblId.Text = ScannedUser.Id.ToString();
+						lblNombre.Text = ScannedUser.Nombre;
+						lblApellido.Text = ScannedUser.Apellido;
+						lblCelular.Text = ScannedUser.Celular.ToString();
+						lblDocumento.Text = ScannedUser.Documento.ToString();
+						lblMonto.Text = ScannedUser.Monto.ToString();
+						lblMedio.Text = ScannedUser.MedioPago;
+						lblSexo.Text = ScannedUser.Sexo;
+						lblFecha.Text = ScannedUser.Fecha.ToString();
+						lblDaysLeft.Text = ScannedUser.daysLeft().ToString();
+						lblCodigo.Text = ScannedUser.Codigo;
+					}
+				}));
+			}
+			catch (ArgumentException ex)
+			{
+				MessageBox.Show("Error en setUserInfo: " + ex.Message);
+			}			
 		}
 		private void checkUserInfo(string code)
 		{
@@ -159,11 +176,9 @@ namespace ArduinoClient
 						ledPanel.GradientTopColor = System.Drawing.Color.Red;						
 						closeDoor();
 					}
-
 					logUser(status, ScannedUser.Id);
 				}));		
 			}
-
 			refreshGrid();
 		}
 		private void logUser(string status, int userId)
@@ -194,7 +209,6 @@ namespace ArduinoClient
 				ledPanel.GradientTopColor = System.Drawing.Color.White;
 				btnAtualizarCuota.Visible = false;
 			}));
-
 		}
 		private void controlDeAcceso()
 		{
@@ -208,8 +222,7 @@ namespace ArduinoClient
 					if (data != null)
 					{
 						var code = data.Replace("Card UID: ", "");
-
-						checkUserInfo(code);
+						this.Invoke(new MethodInvoker(() => checkUserInfo(code)));
 					}
 				}
 			}
@@ -250,7 +263,6 @@ namespace ArduinoClient
 			_arduinoManager.DisposePort();
 
 			Environment.Exit(0);
-
 		}
 		private void EvenDataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
 		{
@@ -277,9 +289,8 @@ namespace ArduinoClient
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(ex.Message);
-			}
-			
+				MessageBox.Show("Error al actualizar cuota consulte al desarrollador" + ex.Message);
+			}			
 		}
 		private void agregarUsuarioToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -295,10 +306,8 @@ namespace ArduinoClient
 
 			Hilo.Resume();
 		}
-		private void abrirPuertaToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			openDoor();
-		}
+		private void abrirPuertaToolStripMenuItem_Click(object sender, EventArgs e)=>openDoor();
+		
 		private void eliminarUsuarioToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (dataGridView2.SelectedRows.Count > 0)
@@ -320,9 +329,8 @@ namespace ArduinoClient
 				}
 			}
 			else
-			{
 				MessageBox.Show("Seleccione un registro para eliminar");
-			}
+			
 		}
 		private void exportarPlanillaToolStripMenuItem_Click(object sender, EventArgs e)
 		{
@@ -364,18 +372,14 @@ namespace ArduinoClient
 		private void btnAgregar_Click(object sender, EventArgs e)
 		{
 			NewUsuario user = new NewUsuario(_arduinoManager, _sqliteDataAccess);
-
 			user.Code = lblCodigo.Text;
-
 			user.ShowDialog();
-
 			refreshGrid();
 		}
 		private void txtSearch_TextChanged(object sender, EventArgs e)
 		{
 			var text = txtSearch.Text;
 			List<UsuarioDB> searched = new List<UsuarioDB>();
-
 			var regex = new Regex(Regex.Escape(text), RegexOptions.IgnoreCase);
 
 			foreach (var user in LstUsers)
@@ -387,27 +391,11 @@ namespace ArduinoClient
 					searched.Add(user);
 				}
 			}
-
 			dataGridView2.DataSource = null;
 			dataGridView2.DataSource = searched;
-
 		}
 		private void dataGridView2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
 		{
-			//var columnIndex = e.ColumnIndex;
-			//var column = dataGridView2.Columns[columnIndex];
-
-			//PropertyDescriptor propDesc = TypeDescriptor.GetProperties(typeof(UsuarioDB))[column.DataPropertyName];
-
-			//ListSortDirection direction = ListSortDirection.Descending;
-			//if (dataGridView2.SortOrder == SortOrder.Descending)
-			//{
-			//	direction = ListSortDirection.Ascending;
-			//}
-
-
-			//((IBindingList)dataGridView2.DataSource).ApplySort(propDesc, direction);
-
 			var columnIndex = e.ColumnIndex;
 			var column = dataGridView2.Columns[columnIndex];
 
@@ -425,33 +413,18 @@ namespace ArduinoClient
 			{
 				var bindingList = new BindingList<UsuarioDB>(dataSource);
 				var sortedList = new BindingList<UsuarioDB>(bindingList.ToList());
-
 				((IBindingList)sortedList).ApplySort(propDesc, direction);
-
-				// Asignar la lista ordenada de nuevo al DataGridView
 				dataGridView2.DataSource = sortedList;
 			}
-
 		}
 		private void btnGroupDeudores_Click(object sender, EventArgs e)
 		{
 			SortableBindingList<UsuarioDB> bindingList = (SortableBindingList<UsuarioDB>)dataGridView2.DataSource;
-
-			// Sort by status first, then by the "Fecha" column (you can change this to any column you prefer)
 			PropertyDescriptor propDesc = TypeDescriptor.GetProperties(typeof(UsuarioDB))["Fecha"];
 			((IBindingList)bindingList).ApplySort(propDesc, ListSortDirection.Ascending);
 		}
 		private void ingresosDeHOYToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-
-			//logUser("Error", 9);
-			
-			//logUser("Error", 10);
-			//logUser("OK", 10);
-			
-			//logUser("Error", 12);
-			//logUser("Error", 12);
-
 			var todayAccess = new TodayAccess(_sqliteDataAccess, _reportSender);
 			todayAccess.ShowDialog();
 		}

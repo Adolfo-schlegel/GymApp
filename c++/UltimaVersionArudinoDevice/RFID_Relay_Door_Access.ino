@@ -6,10 +6,12 @@
 
 const int buzzer = 7; 
 const int relay = 8;
-String lastUID = "";  // Variable to almacenar el último UID leído
+char lastUID[16] = "";  // Para almacenar el último UID leído como una cadena de caracteres
 bool cardDetected = false;  // Indicador para saber si una tarjeta ha sido detectada
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
+unsigned long lastReadTime = 0;  // Almacenar el tiempo de la última lectura
+const unsigned long debounceDelay = 1000;  // Retardo para evitar lecturas consecutivas (1 segundo)
 
 void setup()  {
   Serial.begin(9600);    
@@ -21,45 +23,41 @@ void setup()  {
   mfrc522.PCD_DumpVersionToSerial(); 
 }
 void loop() {
-  // Manejar la lectura de tarjetas RFID
-  handleRFID();
-
   // Manejar los comandos desde el puerto serial
   handleSerialCommands();
+  // Manejar la lectura de tarjetas RFID
+  handleRFID();
 }
-
 void handleRFID() {
-  // Verificar si hay una tarjeta RFID presente
-  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
-    String currentUID = "";
-    
-    // Leer el UID y formatearlo correctamente
+  // Verificar si hay una tarjeta RFID presente y si ha pasado suficiente tiempo desde la última lectura
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial() && (millis() - lastReadTime > debounceDelay)) {
+    char currentUID[16] = "";  // Buffer para el UID actual
+
+    // Leer el UID y formatearlo en hexadecimal directamente en mayúsculas
     for (byte i = 0; i < mfrc522.uid.size; i++) {
-      currentUID += String(mfrc522.uid.uidByte[i], HEX);
+      sprintf(&currentUID[i * 3], "%02X", mfrc522.uid.uidByte[i]);  // Almacenar cada byte en HEX en mayúsculas
       if (i < mfrc522.uid.size - 1) {
-        currentUID += " ";  // Añadir espacio entre bytes
+        currentUID[i * 3 + 2] = ' ';  // Añadir espacio entre bytes
       }
     }
 
-    currentUID.toUpperCase();  // Convertir a mayúsculas para legibilidad
-
     // Verificar si el UID es diferente al último leído
-    if (currentUID != lastUID) {
-      lastUID = currentUID;  // Actualizar el último UID leído
-      cardDetected = true;   // Marcar que se detectó una tarjeta
-      Serial.println("Card UID: " + currentUID);
-      
-      delay(1000);  // Evitar lecturas repetidas en menos de un segundo
-    }
-  }
+    if (strcmp(currentUID, lastUID) != 0) {     
+      strcpy(lastUID, currentUID);  // Actualizar el último UID leído
+      Serial.println("Card UID: " + String(currentUID));  // Enviar el UID por el puerto serial  
 
-  // Reiniciar cuando la tarjeta ya no está presente
-  if (!mfrc522.PICC_IsNewCardPresent() && cardDetected) {
-    lastUID = "";  // Restablecer el UID
-    cardDetected = false;  // Reiniciar la detección
+      lastReadTime = millis();  // Actualizar el tiempo de la última lectura
+      cardDetected = true;  // Establecer que se ha detectado una tarjeta
+      
+      // Aquí podrías agregar código para ejecutar acciones como activar un relé, etc.
+    }
+  } 
+  else if (cardDetected && !mfrc522.PICC_IsNewCardPresent()) {
+    // Si no hay una tarjeta presente pero antes se había detectado una, resetear el último UID leído
+    lastUID[0] = '\0';  // Borrar el último UID leído
+    cardDetected = false;  // Indicar que ya no hay una tarjeta en el rango
   }
 }
-
 
 void handleSerialCommands() {
   // Verificar si hay datos disponibles en el puerto serial
@@ -99,16 +97,7 @@ void performActionX() {
   while (millis() - startTime < 500) {}
   
   tone(buzzer, 100, 1000);
-  
+
   unsigned long startTime2 = millis();
   while (millis() - startTime2 < 1000) {}
-}
-
-String ReadMfrc() {
-    String content;
-    for (byte i = 0; i < mfrc522.uid.size; i++) {
-        content += (mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-        content += String(mfrc522.uid.uidByte[i], HEX);
-    }
-    return content;
 }

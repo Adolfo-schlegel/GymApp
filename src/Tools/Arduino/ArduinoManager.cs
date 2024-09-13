@@ -231,9 +231,12 @@ namespace ArduinoClient.Tools
 						lock (queueLock)
 						{
 							Console.WriteLine($"CODIGO-> {data}");
+
 							receivedDataQueue.Enqueue(data.Trim());
+
+							Thread.Sleep(100);
 						}
-						Thread.Sleep(100);					
+						Thread.Sleep(500);					
 					}
 					else
 					{

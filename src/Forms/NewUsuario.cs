@@ -59,6 +59,31 @@ namespace ArduinoClient
 			};
 		}
 
+		//private string lastCode = "";  // Almacenar el último código recibido
+
+		//private void listenSerial()
+		//{
+		//	while (true)
+		//	{
+		//		var data = _arduinoManager.GetNextReceivedData();
+
+		//		if (data != null)
+		//		{
+		//			var code = data.Replace("Card UID: ", "").Trim();
+
+		//			if (code != lastCode)  // Solo actualiza si el código es diferente
+		//			{
+		//				lastCode = code;
+
+		//				lblCodigo.Invoke(new MethodInvoker(
+		//					delegate
+		//					{
+		//						lblCodigo.Text = code;
+		//					}));
+		//			}
+		//		}
+		//	}
+		//}
 		private void listenSerial()
 		{
 			while (true)
