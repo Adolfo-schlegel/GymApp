@@ -13,6 +13,9 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 unsigned long lastReadTime = 0;  // Almacenar el tiempo de la última lectura
 const unsigned long debounceDelay = 1000;  // Retardo para evitar lecturas consecutivas (1 segundo)
 
+unsigned long pulseDuration = 700;  // Duración del pulso en milisegundos
+unsigned long restDuration = 500;  // Tiempo de descanso antes de otro pulso
+
 void setup()  {
   Serial.begin(9600);    
   pinMode(relay, OUTPUT);    
@@ -80,12 +83,16 @@ void performActionE() {
   // Realizar acciones asociadas con el comando 'E'
   
   tone(buzzer, 500, 500);
-  digitalWrite(relay, HIGH);
+  tone(buzzer, 500, 500);
+  delay(1000);   
 
-  unsigned long startTime = millis();
-  while (millis() - startTime < 3000) {}
-   
-  digitalWrite(relay, LOW);
+  // Realiza 5 vueltas
+  for (int i = 0; i < 5; i++) {
+    digitalWrite(relay, HIGH);  // Activa la cerradura
+    delay(pulseDuration);       // Mantiene la cerradura activada por el tiempo definido
+    digitalWrite(relay, LOW);   // Desactiva la cerradura
+    delay(restDuration);        // Espera un tiempo de descanso antes del siguiente ciclo
+  }
 }
 
 void performActionX() {
