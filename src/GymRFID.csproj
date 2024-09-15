@@ -321,7 +321,9 @@
     <Content Include="DataBase.db">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\DataSources\ArduinoClient.Models.User.datasource" />
     <None Include="Properties\DataSources\ArduinoClient.Models.UsuarioDB.datasource" />
     <None Include="Properties\Settings.settings">

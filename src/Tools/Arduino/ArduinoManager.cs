@@ -6,6 +6,7 @@ using System.Configuration;
 using System.IO;
 using System.IO.Ports;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ArduinoClient.Tools
@@ -125,7 +126,7 @@ namespace ArduinoClient.Tools
 				if (!_serialPort.IsOpen)
 				{
 					_serialPort.Open();
-					Thread.Sleep(1000);
+					Task.Delay(1000);
 				}
 			}
 			catch (TimeoutException tex)
@@ -190,7 +191,7 @@ namespace ArduinoClient.Tools
 				catch (UnauthorizedAccessException)
 				{
 					Console.WriteLine("Acceso denegado al puerto COM. Reintentando...");
-					Thread.Sleep(500);
+					Task.Delay(1000);
 				}
 				catch (IOException ioex)
 				{
@@ -227,20 +228,21 @@ namespace ArduinoClient.Tools
 
 					if (_serialPort != null && _serialPort.IsOpen && _serialPort.BytesToRead > 0)
 					{						
-						string data = _serialPort.ReadLine();
+						string data = _serialPort.ReadExisting();
+						Task.Delay(100);
+
 						lock (queueLock)
 						{
 							Console.WriteLine($"CODIGO-> {data}");
 
 							receivedDataQueue.Enqueue(data.Trim());
 
-							Thread.Sleep(100);
-						}
-						Thread.Sleep(500);					
+							Task.Delay(100);
+						}								
 					}
 					else
 					{
-						Thread.Sleep(100);
+						Task.Delay(100);
 					}
 				}
 			}
