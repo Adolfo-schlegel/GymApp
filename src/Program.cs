@@ -1,7 +1,20 @@
-﻿using ArduinoClient.Tools;
+﻿using ArduinoClient.DB;
+using ArduinoClient.Forms;
+using ArduinoClient.Tools;
+using ArduinoClient.Tools.Arduino;
+using ArduinoClient.Tools.Email;
+using ArduinoClient.Tools.Log;
+using ArduinoClient.WorkingService;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using System;
+using System.Configuration;
 using System.IO;
+using System.IO.Ports;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+
 
 namespace ArduinoClient
 {
@@ -13,17 +26,58 @@ namespace ArduinoClient
 		[STAThread]
 		static void Main()
 		{
-			// Obtener la instancia de ArduinoManager
-			ArduinoManager arduinoManager = ArduinoManager.GetInstance();
+			var host = CreateHostBuilder().Build();
 
-			//Empieza a leer datos del puerto Serial del arduino
-			arduinoManager.StartReading();
+			//Background Services
+			var _dailyWorker = host.Services.GetRequiredService<IDailyWorker>();
+			var _arduinoManager = host.Services.GetRequiredService<IArduinoManager>();
 
+			//Run App
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new Cliente(arduinoManager));
-
-			
+			Application.Run(host.Services.GetRequiredService<Cliente>());			
 		}
+
+		private static IHostBuilder CreateHostBuilder() =>
+		Host.CreateDefaultBuilder()
+		.ConfigureServices((hostContext, services) =>
+		{
+			services.AddSingleton<ISqliteDataAccess, SqliteDataAccess>();
+
+			services.AddSingleton<IReportSender, ReportSender>();
+		
+			services.AddTransient<IEmailSender>(provider =>
+				new EmailSender(
+					smtpHost: ConfigurationManager.AppSettings["Email.smtpHost"],
+					smtpPort: int.Parse(ConfigurationManager.AppSettings["Email.smtpPort"]),
+					smtpUser: ConfigurationManager.AppSettings["Email.From"], 
+					smtpPass: ConfigurationManager.AppSettings["Email.smtpPass"], 
+					enableSsl: true
+				)
+			);
+			services.AddSingleton<IFileLogger, FileLogger>(provider => 
+			new FileLogger(ConfigurationManager.AppSettings["Log.Folder"], "DailyWorkerLogFile") { TypeLogger = TypeLogger.DailyWorker });
+
+			services.AddSingleton<IFileLogger, FileLogger>(provider =>
+			new FileLogger(ConfigurationManager.AppSettings["Log.Folder"], "ReportSenderLogFile") { TypeLogger = TypeLogger.ReportSender });
+
+			services.AddSingleton(provider => new SerialPort
+			{
+				PortName = ConfigurationManager.AppSettings["PuertoCOM"],
+				BaudRate = 9600,
+				ReadTimeout = 1000, 
+				DataBits = 8,
+				Parity = Parity.None,
+				StopBits = StopBits.One,
+				ReadBufferSize = 4096,
+				DtrEnable = true
+			});
+			
+			services.AddSingleton<IArduinoManager, ArduinoManager>();
+			services.AddSingleton<IExcelManager, ExcelManager>();
+			services.AddSingleton<IDailyWorker,DailyWorker>();
+			services.AddTransient<Cliente>();
+		});
 	}
 }
+
