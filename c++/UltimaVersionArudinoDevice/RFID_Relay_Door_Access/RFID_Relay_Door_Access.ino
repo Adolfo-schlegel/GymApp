@@ -18,7 +18,7 @@ unsigned long restDuration = 500;  // Tiempo de descanso antes de otro pulso
 
 void setup()  {
   Serial.begin(9600);    
-  pinMode(relay, OUTPUT);    
+  pinMode(relay, OUTPUT);      
   while (!Serial);    
   SPI.begin();      
   mfrc522.PCD_Init();   
