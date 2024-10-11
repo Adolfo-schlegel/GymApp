@@ -4,6 +4,8 @@
 #define SS_PIN 10
 #define RST_PIN 9
 
+const int greenLed = 4;  // LED verde para acceso permitido
+const int redLed = 5;    // LED rojo para acceso denegado
 const int buzzer = 7; 
 const int relay = 8;
 char lastUID[16] = "";  // Para almacenar el último UID leído como una cadena de caracteres
@@ -13,12 +15,16 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 unsigned long lastReadTime = 0;  // Almacenar el tiempo de la última lectura
 const unsigned long debounceDelay = 1000;  // Retardo para evitar lecturas consecutivas (1 segundo)
 
-unsigned long pulseDuration = 700;  // Duración del pulso en milisegundos
-unsigned long restDuration = 500;  // Tiempo de descanso antes de otro pulso
+unsigned long pulseDuration = 2000;  // Duración del pulso en milisegundos
+unsigned long restDuration = 700;  // Tiempo de descanso antes de otro pulso
 
 void setup()  {
   Serial.begin(9600);    
+  
   pinMode(relay, OUTPUT);      
+  pinMode(greenLed, OUTPUT);  // Configurar el pin del LED verde como salida
+  pinMode(redLed, OUTPUT);    // Configurar el pin del LED rojo como salida
+
   while (!Serial);    
   SPI.begin();      
   mfrc522.PCD_Init();   
@@ -81,23 +87,30 @@ void handleSerialCommands() {
 
 void performActionE() {
   // Realizar acciones asociadas con el comando 'E'
-  
+  // Apagar el LED rojo y encender el LED verde para indicar acceso permitido
+  digitalWrite(redLed, LOW);    // Asegúrate de que el LED rojo esté apagado
+  digitalWrite(greenLed, HIGH); // Encender el LED verde
+
   tone(buzzer, 500, 500);
   tone(buzzer, 500, 500);
   delay(1000);   
 
   // Realiza 5 vueltas
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 2; i++) {
     digitalWrite(relay, HIGH);  // Activa la cerradura
     delay(pulseDuration);       // Mantiene la cerradura activada por el tiempo definido
     digitalWrite(relay, LOW);   // Desactiva la cerradura
     delay(restDuration);        // Espera un tiempo de descanso antes del siguiente ciclo
   }
+
+  digitalWrite(greenLed, LOW);  // Apagar el LED verde cuando termine
 }
 
 void performActionX() {
   // Realizar acciones asociadas con el comando 'X'
-  
+  digitalWrite(greenLed, LOW);   // Asegúrate de que el LED verde esté apagado
+  digitalWrite(redLed, HIGH);    // Encender el LED rojo
+
   tone(buzzer, 500, 500);
   
   unsigned long startTime = millis();
@@ -107,4 +120,6 @@ void performActionX() {
 
   unsigned long startTime2 = millis();
   while (millis() - startTime2 < 1000) {}
+
+  digitalWrite(redLed, LOW);  // Apagar el LED rojo cuando termine
 }

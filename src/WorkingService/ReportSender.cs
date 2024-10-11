@@ -35,29 +35,77 @@ namespace ArduinoClient.WorkingService
 			string emailTo = ConfigurationManager.AppSettings["Email.To"];
 			var date = DateTime.Now.ToString("dd-MM-yyyy");
 			var entries = _sqliteDataAccess.GetTodaysAccessSummary();
-			
+
 			if (entries.Count > 0)
 			{
-				var message = $"";
+				// Build an HTML-formatted message
+				var message = $@"
+            <h2>Reporte de Accesos - {date}</h2>
+            <p>Total de ingresos: {entries.Count}</p>
+            <ul>";
+
 				int totalIngresos = 0;
 
+				// Create an HTML list of users' access summary
 				entries.ForEach(usuario =>
 				{
-					var content = $"{usuario.Nombre} {usuario.Apellido} {usuario.Log}";
-					_logger.Log(content);
-					message += "\n" + content;
-					totalIngresos += usuario.IngresoCount; // Acumula el total de ingresos
+					var content = $"<li>{usuario.Nombre} {usuario.Apellido}: {usuario.Log}</li>";
+					_logger.Log($"{usuario.Nombre} {usuario.Apellido} {usuario.Log}");
+					message += content;
+					totalIngresos += usuario.IngresoCount; // Accumulate the total number of entries
 				});
+
+				message += "</ul>"; // Close the HTML list
 
 				_sqliteDataAccess.ClearTodaysAccess();
 
-				result = await _emailSender.SendEmailWithAttachmentAsync(emailFrom, emailTo, $"{totalIngresos} Ingresos de hoy {date}", message, (excelFile));
+				// Set the total ingresos in the subject and send the email
+				result = await _emailSender.SendEmailWithAttachmentAsync(
+					emailFrom,
+					emailTo,
+					$"{totalIngresos} Ingresos de hoy {date}",
+					message,
+					(excelFile) // Pass the attachment if available
+				);
 			}
-			else			
+			else
+			{
 				result = "Las entidades fueron 0 al enviar el mail";
-			
+			}
+
 			return result;
 		}
+
+		//public async Task<string> SendEmailReportAsync()
+		//{
+		//	string result = "OK";
+		//	string emailFrom = ConfigurationManager.AppSettings["Email.From"];
+		//	string emailTo = ConfigurationManager.AppSettings["Email.To"];
+		//	var date = DateTime.Now.ToString("dd-MM-yyyy");
+		//	var entries = _sqliteDataAccess.GetTodaysAccessSummary();
+
+		//	if (entries.Count > 0)
+		//	{
+		//		var message = $"";
+		//		int totalIngresos = 0;
+
+		//		entries.ForEach(usuario =>
+		//		{
+		//			var content = $"{usuario.Nombre} {usuario.Apellido} {usuario.Log}";
+		//			_logger.Log(content);
+		//			message += "\n" + content;
+		//			totalIngresos += usuario.IngresoCount; // Acumula el total de ingresos
+		//		});
+
+		//		_sqliteDataAccess.ClearTodaysAccess();
+
+		//		result = await _emailSender.SendEmailWithAttachmentAsync(emailFrom, emailTo, $"{totalIngresos} Ingresos de hoy {date}", message, (excelFile));
+		//	}
+		//	else			
+		//		result = "Las entidades fueron 0 al enviar el mail";
+
+		//	return result;
+		//}
 
 		public string SendGoogleDriveReport()
 		{
@@ -72,31 +120,31 @@ namespace ArduinoClient.WorkingService
 			// Asumimos que LoadPeople devuelve una lista de manera síncrona.
 			var entries = await Task.Run(() => _sqliteDataAccess.LoadPeople());
 
-			if (entries.Count == 0)
+			if (entries.Count != 0)
 			{
-				return "Las entidades fueron 0 al guardar el archivo";
-			}
-
-			try
-			{
-				var date = DateTime.Now.ToString("dd-MM-yyyy");
-
-				await Task.Run(() =>
+				try
 				{
-					_excelManager.Initialize();
-					_excelManager.AddSheet($"Gym - {date}");
-					_excelManager.AddItems(entries);
-					_excelManager.SaveAs(excelFile);
-					//_excelManager.RemoveSheet($"Gym - {date}");
-				});
+					var date = DateTime.Now.ToString("dd-MM-yyyy");
 
-				res = "Archivo guardado exitosamente en: " + excelFile + date;
-			}
-			catch (Exception ex)
-			{
-				res = "Error al guardar el archivo: " + ex.Message;
-			}
+					await Task.Run(() =>
+					{
+						_excelManager.Initialize();
+						_excelManager.AddSheet($"Gym - {date}");
+						_excelManager.AddItems(entries);
+						_excelManager.SaveAs(excelFile);
+						//_excelManager.RemoveSheet($"Gym - {date}");
+					});
 
+					res = "Archivo guardado exitosamente en: " + excelFile + date;
+				}
+				catch (Exception ex)
+				{
+					res = "Error al guardar el archivo: " + ex.Message;
+				}
+			}
+			else
+				return "Las entidades fueron 0 al guardar el archivo";
+						
 			return res;
 		}
 
