@@ -38,35 +38,60 @@ namespace ArduinoClient.WorkingService
 
 			if (entries.Count > 0)
 			{
-				// Build an HTML-formatted message
+				// Initialize HTML message
 				var message = $@"
-            <h2>Reporte de Accesos - {date}</h2>
-            <p>Total de ingresos: {entries.Count}</p>
-            <ul>";
+        <html>
+        <head>
+            <style>
+                body {{ font-family: Arial, sans-serif; }}
+                h2 {{ color: #2C3E50; }}
+                table {{ width: 100%; border-collapse: collapse; }}
+                th, td {{ padding: 8px 12px; border: 1px solid #ddd; text-align: left; }}
+                th {{ background-color: #f4f4f4; }}
+                .error-row {{ background-color: #8B0000; color: white; }} /* Red row with white text */
+            </style>
+        </head>
+        <body>
+            <h2>Reporte de Ingresos - {date}</h2>
+            <p>Resumen de los ingresos de hoy:</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Log</th>
+                    </tr>
+                </thead>
+                <tbody>";
 
 				int totalIngresos = 0;
 
-				// Create an HTML list of users' access summary
+				// Build table rows, checking for "Error" in usuario.Log
 				entries.ForEach(usuario =>
 				{
-					var content = $"<li>{usuario.Nombre} {usuario.Apellido}: {usuario.Log}</li>";
-					_logger.Log($"{usuario.Nombre} {usuario.Apellido} {usuario.Log}");
-					message += content;
-					totalIngresos += usuario.IngresoCount; // Accumulate the total number of entries
+					var rowClass = usuario.Log.Contains("Error") ? "error-row" : ""; // Apply 'error-row' class if 'Error' is in the log
+					var row = $@"
+            <tr class='{rowClass}'>
+                <td>{usuario.Nombre}</td>
+                <td>{usuario.Apellido}</td>
+                <td>{usuario.Log}</td>
+            </tr>";
+					message += row;
+
+					totalIngresos += usuario.IngresoCount; // Acumula el total de ingresos
 				});
 
-				message += "</ul>"; // Close the HTML list
+				message += @"
+                </tbody>
+            </table>
+            <p>Total de ingresos: <strong>" + totalIngresos + @"</strong></p>
+        </body>
+        </html>";
 
 				_sqliteDataAccess.ClearTodaysAccess();
 
-				// Set the total ingresos in the subject and send the email
-				result = await _emailSender.SendEmailWithAttachmentAsync(
-					emailFrom,
-					emailTo,
-					$"{totalIngresos} Ingresos de hoy {date}",
-					message,
-					(excelFile) // Pass the attachment if available
-				);
+				// Send email with the HTML-formatted body
+				result = await _emailSender.SendEmailWithAttachmentAsync(emailFrom, emailTo, $"{totalIngresos} Ingresos de hoy {date}", message, excelFile);
 			}
 			else
 			{
@@ -75,6 +100,55 @@ namespace ArduinoClient.WorkingService
 
 			return result;
 		}
+
+
+		//public async Task<string> SendEmailReportAsync()
+		//{			 
+		//	string result = "OK";
+		//	string emailFrom = ConfigurationManager.AppSettings["Email.From"];
+		//	string emailTo = ConfigurationManager.AppSettings["Email.To"];
+		//	var date = DateTime.Now.ToString("dd-MM-yyyy");
+		//	var entries = _sqliteDataAccess.GetTodaysAccessSummary();
+
+		//	if (entries.Count > 0)
+		//	{
+		//		// Build an HTML-formatted message
+		//		var message = $@"
+		//          <h2>Reporte de Accesos - {date}</h2>
+		//          <p>Total de ingresos: {entries.Count}</p>
+		//          <ul>";
+
+		//		int totalIngresos = 0;
+
+		//		// Create an HTML list of users' access summary
+		//		entries.ForEach(usuario =>
+		//		{
+		//			var content = $"<li>{usuario.Nombre} {usuario.Apellido}: {usuario.Log}</li>";
+		//			_logger.Log($"{usuario.Nombre} {usuario.Apellido} {usuario.Log}");
+		//			message += content;
+		//			totalIngresos += usuario.IngresoCount; // Accumulate the total number of entries
+		//		});
+
+		//		message += "</ul>"; // Close the HTML list
+
+		//		_sqliteDataAccess.ClearTodaysAccess();
+
+		//		// Set the total ingresos in the subject and send the email
+		//		result = await _emailSender.SendEmailWithAttachmentAsync(
+		//			emailFrom,
+		//			emailTo,
+		//			$"{totalIngresos} Ingresos de hoy {date}",
+		//			message,
+		//			(excelFile) // Pass the attachment if available
+		//		);
+		//	}
+		//	else
+		//	{
+		//		result = "Las entidades fueron 0 al enviar el mail";
+		//	}
+
+		//	return result;
+		//}
 
 		//public async Task<string> SendEmailReportAsync()
 		//{
