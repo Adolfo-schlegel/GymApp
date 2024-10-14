@@ -49,6 +49,9 @@ namespace ArduinoClient.Tools.Email
 				mail.From = new MailAddress(fromAddress);
 				mail.To.Add(toAddress);
 				mail.Subject = subject;
+
+				// Allow HTML content in the email body
+				mail.IsBodyHtml = true;
 				mail.Body = body;
 
 				// Verifica si se debe adjuntar un archivo

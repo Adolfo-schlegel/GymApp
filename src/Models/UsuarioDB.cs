@@ -22,12 +22,24 @@ namespace ArduinoClient.Models
 		public int EstadoCorreo { get; set; }
 		public string Log { get; set; }
 
-		public bool isUpToDate() => DateTime.Today.Subtract(DateTime.Parse(Fecha)).TotalDays <= 30;
+		public bool isUpToDate()
+		{
+			// Normalizamos las fechas
+			DateTime fechaUsuario = DateTime.Parse(Fecha).Date;
+			DateTime fechaActual = DateTime.Today;
+
+			// Comprobamos si la diferencia es de 30 días o menos
+			return fechaActual.Subtract(fechaUsuario).TotalDays <= 30;
+		}
 
 		public int daysLeft()
 		{
+			// Normalizamos ambas fechas para ignorar la hora
+			DateTime fechaUsuario = DateTime.Parse(Fecha).Date; // Solo la fecha
+			DateTime fechaActual = DateTime.Today; // Ya es solo la fecha
+
 			// Calcula los días restantes hasta que la fecha esté desactualizada
-			TimeSpan diferencia = DateTime.Parse(Fecha).AddDays(30) - DateTime.Today;
+			TimeSpan diferencia = fechaUsuario.AddDays(30) - fechaActual;
 			return (int)diferencia.TotalDays;
 		}
 	}

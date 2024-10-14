@@ -12,5 +12,7 @@ namespace ArduinoClient.DB
 		public string Apellido { get; set; }
 		public string Log { get; set; }
 		public int IngresoCount { get; set; }
+		public int Usuario_id { get; set; }
+		public long Celular { get; set; }
 	}
 }

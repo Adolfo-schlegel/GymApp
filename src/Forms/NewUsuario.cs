@@ -3,6 +3,7 @@ using ArduinoClient.Models;
 using ArduinoClient.Tools;
 using ArduinoClient.Tools.Arduino;
 using System;
+using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
 namespace ArduinoClient
@@ -27,6 +28,10 @@ namespace ArduinoClient
 			lblCodigo.Text = Code;
 
 			dateTimePicker1.Text = DateTime.Now.ToShortDateString();
+
+			txtDocumento.KeyPress += txtNumerico_KeyPress;
+			txtCelular.KeyPress += txtNumerico_KeyPress;
+			txtMonto.KeyPress += txtNumerico_KeyPress; 
 		}
 		private void btnGuardarUsuario_Click(object sender, EventArgs e)
 		{
@@ -41,53 +46,53 @@ namespace ArduinoClient
 			}
 
 			hilo.Suspend();
+		}		
+		private void txtNumerico_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			// Permitir solo dígitos y teclas de control (como retroceso)
+			if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+			{
+				e.Handled = true; // Cancela la tecla presionada
+			}
 		}
 		public UsuarioDB getUserFromTextbox()
 		{
+			long documento = 0;
+			long celular = 0;
+			long monto = 0;
+
+			// Intentamos convertir los valores numéricos de los campos
+			bool documentoValido = long.TryParse(txtDocumento.Text, out documento);
+			bool celularValido = long.TryParse(txtCelular.Text, out celular);
+			bool montoValido = long.TryParse(txtMonto.Text, out monto);
+
+			// Validamos que todos los campos numéricos críticos sean correctos
+			if (!documentoValido || !celularValido || !montoValido)
+			{
+				throw new FormatException("Uno o más campos contienen datos no válidos.");
+			}
+
 			return new UsuarioDB()
 			{
 				Codigo = lblCodigo.Text,
 				Nombre = txtNombre.Text,
 				Apellido = txtApellido.Text,
-				Documento = long.Parse(txtDocumento.Text),
+				Documento = documento,
 				Sexo = comboBox1.Text,
-				Celular = long.Parse(txtCelular.Text),
+				Celular = celular,
 				MedioPago = cbMedio.Text,
-				Fecha = dateTimePicker1.Text,
-				Monto = long.Parse(txtMonto.Text),
+				Fecha = dateTimePicker1.Value.ToString("dd-MM-yyyy"),
+				Monto = monto, 
 				Correo = txtAddres.Text + "@" + txtCorreo.Text
 			};
 		}
 
-		//private string lastCode = "";  // Almacenar el último código recibido
-
-		//private void listenSerial()
-		//{
-		//	while (true)
-		//	{
-		//		var data = _arduinoManager.GetNextReceivedData();
-
-		//		if (data != null)
-		//		{
-		//			var code = data.Replace("Card UID: ", "").Trim();
-
-		//			if (code != lastCode)  // Solo actualiza si el código es diferente
-		//			{
-		//				lastCode = code;
-
-		//				lblCodigo.Invoke(new MethodInvoker(
-		//					delegate
-		//					{
-		//						lblCodigo.Text = code;
-		//					}));
-		//			}
-		//		}
-		//	}
-		//}
 		private void listenSerial()
 		{
 			while (true)
 			{
+				Thread.Sleep(100);
+
 				var data = _arduinoManager.GetNextReceivedData();
 
 				if (data != null)

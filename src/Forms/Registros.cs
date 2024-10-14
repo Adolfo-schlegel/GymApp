@@ -135,6 +135,7 @@ namespace ArduinoClient
 		{
 			cleanLabels();
 
+			//Blanco
 			if (!isUserExist(code))
 			{
 				lblCodigo.Invoke(new MethodInvoker(
@@ -376,24 +377,6 @@ namespace ArduinoClient
 			user.ShowDialog();
 			refreshGrid();
 		}
-		private void txtSearch_TextChanged(object sender, EventArgs e)
-		{
-			var text = txtSearch.Text;
-			List<UsuarioDB> searched = new List<UsuarioDB>();
-			var regex = new Regex(Regex.Escape(text), RegexOptions.IgnoreCase);
-
-			foreach (var user in LstUsers)
-			{
-				var token = user.Nombre.ToLower() +" "+ user.Apellido.ToLower() + " "+ user.Documento +" "+ user.Fecha;
-
-				if (regex.IsMatch(token))
-				{
-					searched.Add(user);
-				}
-			}
-			dataGridView2.DataSource = null;
-			dataGridView2.DataSource = searched;
-		}
 		private void dataGridView2_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
 		{
 			var columnIndex = e.ColumnIndex;
@@ -419,10 +402,66 @@ namespace ArduinoClient
 		}
 		private void btnGroupDeudores_Click(object sender, EventArgs e)
 		{
-			SortableBindingList<UsuarioDB> bindingList = (SortableBindingList<UsuarioDB>)dataGridView2.DataSource;
-			PropertyDescriptor propDesc = TypeDescriptor.GetProperties(typeof(UsuarioDB))["Fecha"];
-			((IBindingList)bindingList).ApplySort(propDesc, ListSortDirection.Ascending);
+			try
+			{
+				// Ensure the DataSource is a SortableBindingList
+				if (dataGridView2.DataSource is SortableBindingList<UsuarioDB> bindingList)
+				{
+					// Get the property descriptor for "Fecha"
+					PropertyDescriptor propDesc = TypeDescriptor.GetProperties(typeof(UsuarioDB))["Fecha"];
+
+					// Check if propDesc is null (i.e., if "Fecha" property doesn't exist)
+					if (propDesc == null)
+					{
+						MessageBox.Show("The 'Fecha' property was not found in the data model.");
+						return; // Exit the method to prevent further errors
+					}
+
+					// Apply sort based on the "Fecha" property
+					((IBindingList)bindingList).ApplySort(propDesc, ListSortDirection.Ascending);
+				}
+				else
+				{
+					// Handle the case where the DataSource is not a SortableBindingList
+					MessageBox.Show("The data source is not a sortable list.");
+				}
+			}
+			catch (Exception ex)
+			{
+				MessageBox.Show("Error in btnGroupDeudores_Click: " + ex.Message);
+			}
 		}
+
+		private void txtSearch_TextChanged(object sender, EventArgs e)
+		{
+			var text = txtSearch.Text;
+			List<UsuarioDB> searched = new List<UsuarioDB>();
+			var regex = new Regex(Regex.Escape(text), RegexOptions.IgnoreCase);
+
+			// Search logic with null checks
+			foreach (var user in LstUsers)
+			{
+				if (user != null) // Ensure user is not null
+				{
+					var token = user.Nombre.ToLower() + " " + user.Apellido.ToLower() + " " + user.Documento + " " + user.Fecha;
+					if (regex.IsMatch(token))
+					{
+						searched.Add(user);
+					}
+				}
+			}
+
+			// Convert List<UsuarioDB> to SortableBindingList<UsuarioDB> after the search
+			SortableBindingList<UsuarioDB> sortableSearchedList = new SortableBindingList<UsuarioDB>(searched);
+
+			// Reapply the status function after filtering
+			sortableSearchedList.SetStatusFunc(item => item.isUpToDate());
+
+			// Update the DataSource with the sortable list
+			dataGridView2.DataSource = null; // Clear existing binding
+			dataGridView2.DataSource = sortableSearchedList; // Set new binding list
+		}
+
 		private void ingresosDeHOYToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			var todayAccess = new TodayAccess(_sqliteDataAccess, _reportSender);

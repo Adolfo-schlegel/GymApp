@@ -26,6 +26,11 @@ namespace ArduinoClient
 			_sqliteDataAccess = sqliteDataAccess;
 			this._arduinoManager = arduinoManager;
 
+			// Asignar evento KeyPress a campos numéricos
+			txtDocumento.KeyPress += txtNumerico_KeyPress;
+			txtCelular.KeyPress += txtNumerico_KeyPress;
+			txtMonto.KeyPress += txtNumerico_KeyPress;
+
 			hilo = new Thread(listenSerial);
 			hilo.Start();			
 		}
@@ -44,20 +49,57 @@ namespace ArduinoClient
 			hilo.Suspend();
 			MessageBox.Show("Usuario agregado: " + txtNombre.Text);			
 		}
+		//public UsuarioDB getUserFromTextbox()
+		//{
+		//	return new UsuarioDB()
+		//	{
+		//		Id = int.Parse(lblID.Text),
+		//		Codigo = lblCodigo.Text,
+		//		Nombre = txtNombre.Text,
+		//		Apellido = txtApellido.Text,
+		//		Documento = long.Parse(txtDocumento.Text),
+		//		Sexo = comboBox1.Text,
+		//		Celular = long.Parse(txtCelular.Text),
+		//		MedioPago = cbMedio.Text,
+		//		Fecha = dateTimePicker1.Text,
+		//		Monto = long.Parse(txtMonto.Text),
+		//		Correo = txtAddres.Text + "@" + txtCorreo.Text,
+		//		Log = txtRegistro.Text
+		//	};
+		//}
 		public UsuarioDB getUserFromTextbox()
 		{
+			// Variables para las conversiones
+			int id;
+			long documento;
+			long celular;
+			long monto;
+
+			// Intentamos convertir los valores a sus tipos correspondientes
+			bool idValido = int.TryParse(lblID.Text, out id);
+			bool documentoValido = long.TryParse(txtDocumento.Text, out documento);
+			bool celularValido = long.TryParse(txtCelular.Text, out celular);
+			bool montoValido = long.TryParse(txtMonto.Text, out monto);
+
+			// Si alguna conversión falla, lanzamos una excepción
+			if (!idValido || !documentoValido || !celularValido || !montoValido)
+			{
+				throw new FormatException("Uno o más campos contienen datos no válidos.");
+			}
+
+			// Crear y devolver el objeto UsuarioDB si todas las conversiones son válidas
 			return new UsuarioDB()
 			{
-				Id = int.Parse(lblID.Text),
+				Id = id,
 				Codigo = lblCodigo.Text,
 				Nombre = txtNombre.Text,
 				Apellido = txtApellido.Text,
-				Documento = long.Parse(txtDocumento.Text),
+				Documento = documento,
 				Sexo = comboBox1.Text,
-				Celular = long.Parse(txtCelular.Text),
+				Celular = celular,
 				MedioPago = cbMedio.Text,
 				Fecha = dateTimePicker1.Text,
-				Monto = long.Parse(txtMonto.Text),
+				Monto = monto,
 				Correo = txtAddres.Text + "@" + txtCorreo.Text,
 				Log = txtRegistro.Text
 			};
@@ -86,6 +128,15 @@ namespace ArduinoClient
 				txtAddres.Text = correo;
 
 		}
+		private void txtNumerico_KeyPress(object sender, KeyPressEventArgs e)
+		{
+			// Permitir solo dígitos y teclas de control
+			if (!char.IsDigit(e.KeyChar) && !char.IsControl(e.KeyChar))
+			{
+				e.Handled = true; // Cancela la tecla si no es válida
+			}
+		}
+
 		private void listenSerial()
 		{
 			while (true)

@@ -8,7 +8,7 @@ namespace ArduinoClient.Tools.Arduino
 {
 	public interface IArduinoManager
 	{
-		void StartReading();
+		//void StartReading();
 		void StopReading();
 		string GetNextReceivedData();
 		void WriteToSerialPort(string data);

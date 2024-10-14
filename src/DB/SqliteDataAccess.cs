@@ -111,9 +111,8 @@ namespace ArduinoClient
 			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
 			{
 				cnn.Open();
-
 				string query = @"
-				SELECT u.Nombre, u.Apellido, i.Log, 1 AS IngresoCount
+				SELECT u.Nombre, u.Apellido, i.Log, i.Usuario_id, u.Celular, 1 AS IngresoCount
 				FROM Ingresos i
 				JOIN Usuario u ON i.Usuario_id = u.id
 				ORDER BY u.Nombre, u.Apellido, i.Log";

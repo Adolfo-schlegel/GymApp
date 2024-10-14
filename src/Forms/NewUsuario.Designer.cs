@@ -67,16 +67,16 @@
 			// 
 			// txtNombre
 			// 
-			this.txtNombre.Location = new System.Drawing.Point(117, 88);
+			this.txtNombre.Location = new System.Drawing.Point(120, 88);
 			this.txtNombre.Name = "txtNombre";
-			this.txtNombre.Size = new System.Drawing.Size(150, 20);
+			this.txtNombre.Size = new System.Drawing.Size(245, 20);
 			this.txtNombre.TabIndex = 1;
 			// 
 			// txtApellido
 			// 
-			this.txtApellido.Location = new System.Drawing.Point(117, 114);
+			this.txtApellido.Location = new System.Drawing.Point(120, 114);
 			this.txtApellido.Name = "txtApellido";
-			this.txtApellido.Size = new System.Drawing.Size(150, 20);
+			this.txtApellido.Size = new System.Drawing.Size(245, 20);
 			this.txtApellido.TabIndex = 3;
 			// 
 			// label2
@@ -92,9 +92,9 @@
 			// 
 			// txtDocumento
 			// 
-			this.txtDocumento.Location = new System.Drawing.Point(117, 140);
+			this.txtDocumento.Location = new System.Drawing.Point(120, 140);
 			this.txtDocumento.Name = "txtDocumento";
-			this.txtDocumento.Size = new System.Drawing.Size(150, 20);
+			this.txtDocumento.Size = new System.Drawing.Size(245, 20);
 			this.txtDocumento.TabIndex = 7;
 			this.txtDocumento.Text = "0";
 			// 
@@ -133,9 +133,9 @@
 			// 
 			// txtCelular
 			// 
-			this.txtCelular.Location = new System.Drawing.Point(117, 192);
+			this.txtCelular.Location = new System.Drawing.Point(120, 192);
 			this.txtCelular.Name = "txtCelular";
-			this.txtCelular.Size = new System.Drawing.Size(150, 20);
+			this.txtCelular.Size = new System.Drawing.Size(245, 20);
 			this.txtCelular.TabIndex = 11;
 			this.txtCelular.Text = "0";
 			// 
@@ -165,7 +165,7 @@
 			// 
 			this.txtMonto.Location = new System.Drawing.Point(87, 270);
 			this.txtMonto.Name = "txtMonto";
-			this.txtMonto.Size = new System.Drawing.Size(180, 20);
+			this.txtMonto.Size = new System.Drawing.Size(278, 20);
 			this.txtMonto.TabIndex = 17;
 			this.txtMonto.Text = "0";
 			// 
@@ -188,7 +188,7 @@
             "Efectivo"});
 			this.cbMedio.Location = new System.Drawing.Point(143, 218);
 			this.cbMedio.Name = "cbMedio";
-			this.cbMedio.Size = new System.Drawing.Size(124, 21);
+			this.cbMedio.Size = new System.Drawing.Size(222, 21);
 			this.cbMedio.TabIndex = 18;
 			this.cbMedio.Text = "Efectivo";
 			// 
@@ -202,13 +202,13 @@
 			this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Short;
 			this.dateTimePicker1.Location = new System.Drawing.Point(143, 246);
 			this.dateTimePicker1.Name = "dateTimePicker1";
-			this.dateTimePicker1.Size = new System.Drawing.Size(124, 22);
+			this.dateTimePicker1.Size = new System.Drawing.Size(222, 22);
 			this.dateTimePicker1.TabIndex = 19;
 			this.dateTimePicker1.Value = new System.DateTime(2024, 4, 8, 1, 1, 38, 0);
 			// 
 			// button1
 			// 
-			this.button1.Location = new System.Drawing.Point(183, 334);
+			this.button1.Location = new System.Drawing.Point(277, 334);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(88, 32);
 			this.button1.TabIndex = 20;
@@ -224,9 +224,9 @@
             "Femenino",
             "Masculino",
             "X"});
-			this.comboBox1.Location = new System.Drawing.Point(117, 165);
+			this.comboBox1.Location = new System.Drawing.Point(120, 165);
 			this.comboBox1.Name = "comboBox1";
-			this.comboBox1.Size = new System.Drawing.Size(150, 21);
+			this.comboBox1.Size = new System.Drawing.Size(245, 21);
 			this.comboBox1.TabIndex = 21;
 			this.comboBox1.Text = "Masculino";
 			// 
@@ -234,7 +234,7 @@
 			// 
 			this.txtAddres.Location = new System.Drawing.Point(86, 296);
 			this.txtAddres.Name = "txtAddres";
-			this.txtAddres.Size = new System.Drawing.Size(62, 20);
+			this.txtAddres.Size = new System.Drawing.Size(133, 20);
 			this.txtAddres.TabIndex = 25;
 			// 
 			// label11
@@ -250,9 +250,9 @@
 			// 
 			// txtCorreo
 			// 
-			this.txtCorreo.Location = new System.Drawing.Point(179, 296);
+			this.txtCorreo.Location = new System.Drawing.Point(257, 296);
 			this.txtCorreo.Name = "txtCorreo";
-			this.txtCorreo.Size = new System.Drawing.Size(88, 20);
+			this.txtCorreo.Size = new System.Drawing.Size(108, 20);
 			this.txtCorreo.TabIndex = 26;
 			// 
 			// label12
@@ -260,7 +260,7 @@
 			this.label12.AutoSize = true;
 			this.label12.BackColor = System.Drawing.Color.SkyBlue;
 			this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label12.Location = new System.Drawing.Point(150, 296);
+			this.label12.Location = new System.Drawing.Point(225, 296);
 			this.label12.Name = "label12";
 			this.label12.Size = new System.Drawing.Size(26, 20);
 			this.label12.TabIndex = 27;
@@ -304,7 +304,7 @@
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
-			this.ClientSize = new System.Drawing.Size(296, 378);
+			this.ClientSize = new System.Drawing.Size(377, 378);
 			this.Controls.Add(this.label13);
 			this.Controls.Add(this.lblCodigo);
 			this.Controls.Add(this.label12);
