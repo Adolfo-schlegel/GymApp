@@ -47,7 +47,10 @@ namespace ArduinoClient
 			}
 
 			hilo.Suspend();
-			MessageBox.Show("Usuario agregado: " + txtNombre.Text);			
+			MessageBox.Show("Usuario modificado: " + txtNombre.Text);
+
+			int currentCount = _sqliteDataAccess.GetActionCount("UsersModified");
+			_sqliteDataAccess.UpdateActionCount("UsersModified", currentCount + 1);
 		}
 		//public UsuarioDB getUserFromTextbox()
 		//{

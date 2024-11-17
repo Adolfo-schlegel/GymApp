@@ -35,7 +35,15 @@
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
+			this.label4 = new System.Windows.Forms.Label();
+			this.lblPuerta = new System.Windows.Forms.Label();
+			this.label5 = new System.Windows.Forms.Label();
+			this.lblUsersCreated = new System.Windows.Forms.Label();
 			this.btnEnviarReporte = new ArduinoClient.Models.RJButton();
+			this.label6 = new System.Windows.Forms.Label();
+			this.lblUsersDeleted = new System.Windows.Forms.Label();
+			this.label7 = new System.Windows.Forms.Label();
+			this.lblUsersModified = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// txtRegistro
@@ -116,6 +124,50 @@
 			this.label3.TabIndex = 38;
 			this.label3.Text = "Total :";
 			// 
+			// label4
+			// 
+			this.label4.AutoSize = true;
+			this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label4.ForeColor = System.Drawing.Color.DodgerBlue;
+			this.label4.Location = new System.Drawing.Point(629, 116);
+			this.label4.Name = "label4";
+			this.label4.Size = new System.Drawing.Size(135, 20);
+			this.label4.TabIndex = 43;
+			this.label4.Text = "Acceso puerta :";
+			// 
+			// lblPuerta
+			// 
+			this.lblPuerta.AutoSize = true;
+			this.lblPuerta.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblPuerta.ForeColor = System.Drawing.Color.DodgerBlue;
+			this.lblPuerta.Location = new System.Drawing.Point(763, 116);
+			this.lblPuerta.Name = "lblPuerta";
+			this.lblPuerta.Size = new System.Drawing.Size(19, 20);
+			this.lblPuerta.TabIndex = 42;
+			this.lblPuerta.Text = "0";
+			// 
+			// label5
+			// 
+			this.label5.AutoSize = true;
+			this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label5.ForeColor = System.Drawing.Color.DeepPink;
+			this.label5.Location = new System.Drawing.Point(629, 152);
+			this.label5.Name = "label5";
+			this.label5.Size = new System.Drawing.Size(162, 20);
+			this.label5.TabIndex = 45;
+			this.label5.Text = "Usuarios Creados :";
+			// 
+			// lblUsersCreated
+			// 
+			this.lblUsersCreated.AutoSize = true;
+			this.lblUsersCreated.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblUsersCreated.ForeColor = System.Drawing.Color.DeepPink;
+			this.lblUsersCreated.Location = new System.Drawing.Point(797, 152);
+			this.lblUsersCreated.Name = "lblUsersCreated";
+			this.lblUsersCreated.Size = new System.Drawing.Size(19, 20);
+			this.lblUsersCreated.TabIndex = 44;
+			this.lblUsersCreated.Text = "0";
+			// 
 			// btnEnviarReporte
 			// 
 			this.btnEnviarReporte.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(192)))), ((int)(((byte)(128)))));
@@ -136,12 +188,64 @@
 			this.btnEnviarReporte.UseVisualStyleBackColor = false;
 			this.btnEnviarReporte.Click += new System.EventHandler(this.btnEnviarReporte_ClickAsync);
 			// 
+			// label6
+			// 
+			this.label6.AutoSize = true;
+			this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label6.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+			this.label6.Location = new System.Drawing.Point(629, 186);
+			this.label6.Name = "label6";
+			this.label6.Size = new System.Drawing.Size(182, 20);
+			this.label6.TabIndex = 47;
+			this.label6.Text = "Usuarios Eliminados :";
+			// 
+			// lblUsersDeleted
+			// 
+			this.lblUsersDeleted.AutoSize = true;
+			this.lblUsersDeleted.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblUsersDeleted.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(128)))), ((int)(((byte)(0)))));
+			this.lblUsersDeleted.Location = new System.Drawing.Point(817, 186);
+			this.lblUsersDeleted.Name = "lblUsersDeleted";
+			this.lblUsersDeleted.Size = new System.Drawing.Size(19, 20);
+			this.lblUsersDeleted.TabIndex = 46;
+			this.lblUsersDeleted.Text = "0";
+			// 
+			// label7
+			// 
+			this.label7.AutoSize = true;
+			this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label7.ForeColor = System.Drawing.Color.Cyan;
+			this.label7.Location = new System.Drawing.Point(629, 219);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(191, 20);
+			this.label7.TabIndex = 49;
+			this.label7.Text = "Usuarios Modificados :";
+			// 
+			// lblUsersModified
+			// 
+			this.lblUsersModified.AutoSize = true;
+			this.lblUsersModified.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.lblUsersModified.ForeColor = System.Drawing.Color.Cyan;
+			this.lblUsersModified.Location = new System.Drawing.Point(826, 219);
+			this.lblUsersModified.Name = "lblUsersModified";
+			this.lblUsersModified.Size = new System.Drawing.Size(19, 20);
+			this.lblUsersModified.TabIndex = 48;
+			this.lblUsersModified.Text = "0";
+			// 
 			// TodayAccess
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(22)))), ((int)(((byte)(22)))), ((int)(((byte)(22)))));
-			this.ClientSize = new System.Drawing.Size(796, 385);
+			this.ClientSize = new System.Drawing.Size(883, 385);
+			this.Controls.Add(this.label7);
+			this.Controls.Add(this.lblUsersModified);
+			this.Controls.Add(this.label6);
+			this.Controls.Add(this.lblUsersDeleted);
+			this.Controls.Add(this.label5);
+			this.Controls.Add(this.lblUsersCreated);
+			this.Controls.Add(this.label4);
+			this.Controls.Add(this.lblPuerta);
 			this.Controls.Add(this.btnEnviarReporte);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.label2);
@@ -168,5 +272,13 @@
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label3;
 		private Models.RJButton btnEnviarReporte;
+		private System.Windows.Forms.Label label4;
+		private System.Windows.Forms.Label lblPuerta;
+		private System.Windows.Forms.Label label5;
+		private System.Windows.Forms.Label lblUsersCreated;
+		private System.Windows.Forms.Label label6;
+		private System.Windows.Forms.Label lblUsersDeleted;
+		private System.Windows.Forms.Label label7;
+		private System.Windows.Forms.Label lblUsersModified;
 	}
 }

@@ -39,8 +39,16 @@ namespace ArduinoClient.Forms
 			int okCount = 0;
 			int errorCount = 0;
 			int totalCount = 0;
+			int accesosDePuertaCount = 0;
+			int usersCreatedCount = 0;
+			int usersDeletedCount = 0;
+			int usersModifiedCount = 0;
 
 			var entries = _sqliteDataAccess.GetTodaysAccessSummary();
+			accesosDePuertaCount =  _sqliteDataAccess.GetActionCount("Door");
+			usersCreatedCount = _sqliteDataAccess.GetActionCount("UsersCreated");
+			usersDeletedCount = _sqliteDataAccess.GetActionCount("UsersDeleted");
+			usersModifiedCount = _sqliteDataAccess.GetActionCount("UsersModified");
 
 			// Limpiar el contenido inicial del TextBox
 			txtRegistro.Text = "";
@@ -69,6 +77,10 @@ namespace ArduinoClient.Forms
 			lblDenegados.Text = errorCount.ToString();
 			lblPermitidos.Text = okCount.ToString();
 			lblTotal.Text = totalCount.ToString();
+			lblPuerta.Text = accesosDePuertaCount.ToString();
+			lblUsersCreated.Text = usersCreatedCount.ToString();
+			lblUsersDeleted.Text = usersDeletedCount.ToString();
+			lblUsersModified.Text = usersModifiedCount.ToString();
 		}
 	}
 }

@@ -39,6 +39,9 @@ namespace ArduinoClient
 			{
 				_sqliteDataAccess.SaveUser(getUserFromTextbox());
 				MessageBox.Show("Usuario agregado: " + txtNombre.Text);
+
+				int currentCount = _sqliteDataAccess.GetActionCount("UsersCreated");
+				_sqliteDataAccess.UpdateActionCount("UsersCreated", currentCount + 1);
 			}
 			catch(Exception ex)
 			{

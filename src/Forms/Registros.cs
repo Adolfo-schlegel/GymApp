@@ -13,6 +13,7 @@ using ArduinoClient.Tools.Arduino;
 using ArduinoClient.Forms;
 using ArduinoClient.WorkingService;
 using DocumentFormat.OpenXml.EMMA;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ArduinoClient
 {
@@ -307,8 +308,27 @@ namespace ArduinoClient
 
 			Hilo.Resume();
 		}
-		private void abrirPuertaToolStripMenuItem_Click(object sender, EventArgs e)=>openDoor();
-		
+		// Define una variable DateTime para registrar la última vez que se hizo clic en el botón.
+		private DateTime lastClickTime = DateTime.MinValue;
+
+		private void abrirPuertaToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			// Compara el tiempo actual con el último clic.
+			if ((DateTime.Now - lastClickTime).TotalSeconds >= 2)
+			{
+				// Actualiza el tiempo del último clic y ejecuta la acción.
+				lastClickTime = DateTime.Now;
+				openDoor();
+
+				int currentCount = _sqliteDataAccess.GetActionCount("Door");
+				_sqliteDataAccess.UpdateActionCount("Door", currentCount + 1);
+			}
+			else
+			{
+				// Opción: puedes mostrar un mensaje indicando que debe esperar.
+				MessageBox.Show("Espere 2 segundos antes de volver a abrir la puerta.");
+			}
+		}
 		private void eliminarUsuarioToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 			if (dataGridView2.SelectedRows.Count > 0)
@@ -322,6 +342,9 @@ namespace ArduinoClient
 						refreshGrid();
 
 						MessageBox.Show("Usuario eliminado");
+
+						int currentCount = _sqliteDataAccess.GetActionCount("UsersDeleted");
+						_sqliteDataAccess.UpdateActionCount("UsersDeleted", currentCount + 1);
 					}
 				}
 				catch (Exception ex)
@@ -353,7 +376,7 @@ namespace ArduinoClient
 
 						_excelManager.AddItems(LstUsers);
 
-						_excelManager.SaveAs(directoryPath);
+						_excelManager.SaveAs(directoryPath + @"\RegistroGym.xlsm");
 
 						MessageBox.Show("Archivo guardado exitosamente en: " + directoryPath);
 					}

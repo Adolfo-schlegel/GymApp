@@ -9,6 +9,9 @@ namespace ArduinoClient.DB
 {
 	public interface ISqliteDataAccess
 	{
+		void DeleteAllActions();
+		void UpdateActionCount(string actionName, int newCount);
+		int GetActionCount(string actionName);
 		List<UsuarioDB> LoadPeople();
 		void LogHistoricalDateAccessUser(int userId, string logLine);
 		void SaveUser(UsuarioDB user);

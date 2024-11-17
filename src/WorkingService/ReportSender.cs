@@ -38,6 +38,12 @@ namespace ArduinoClient.WorkingService
 			string emailTo = ConfigurationManager.AppSettings["Email.To"];
 			var date = DateTime.Now.ToString("dd-MM-yyyy");
 			var entries = _sqliteDataAccess.GetTodaysAccessSummary();
+			int totalPuertaAbierta = _sqliteDataAccess.GetActionCount("Door");
+			int totalCreaciones = _sqliteDataAccess.GetActionCount("UsersCreated");
+			int totalEliminaciones = _sqliteDataAccess.GetActionCount("UsersDeleted");
+			int totalModificados = _sqliteDataAccess.GetActionCount("UsersModified");
+			int totalIngresos = 0;
+			
 
 			if (entries.Count > 0)
 			{
@@ -56,6 +62,11 @@ namespace ArduinoClient.WorkingService
         th {{ background-color: #007BFF; color: white; }}
         .error-row {{ background-color: #8B0000; color: white; }} /* Red row with white text */
         .total {{ margin-top: 20px; font-size: 18px; text-align: right; }}
+		.total-ingresos {{color: green; }}
+		.total-puerta {{color: blue; }}
+		.total-creaciones {{color: orange; }}
+		.total-eliminaciones {{color: red; }}
+		.total-modificaciones {{color: purple; }}
         footer {{ text-align: center; margin-top: 40px; font-size: 12px; color: #666; }}
     </style>
 </head>
@@ -77,7 +88,6 @@ namespace ArduinoClient.WorkingService
             </thead>
             <tbody>";
 
-				int totalIngresos = 0;
 				HashSet<int> uniqueUserIds = new HashSet<int>();
 
 				entries.ForEach(usuario =>
@@ -104,7 +114,11 @@ namespace ArduinoClient.WorkingService
 				message += $@"
             </tbody>
         </table>
-        <p class='total'>Total de ingresos: <strong>{totalIngresos}</strong></p>
+		<p class='total' style='color: blue;'>Total de ingresos con llavero: <strong>{totalIngresos}</strong></p>
+        <p class='total' style='color: purple;'>Total de ingresos con sistema: <strong>{totalPuertaAbierta}</strong></p>
+        <p class='total' style='color: orange;'>Total de nuevos usuarios: <strong>{totalCreaciones}</strong></p>
+        <p class='total' style='color: red;'>Total de eliminaciones: <strong>{totalEliminaciones}</strong></p>
+        <p class='total' style='color: green;'>Total de actualizaciones de cuota: <strong>{totalModificados}</strong></p>
     </div>
     <footer>
         <p>SPORTLIFE - Su aliado en el deporte y bienestar.</p>
@@ -114,7 +128,8 @@ namespace ArduinoClient.WorkingService
 </html>";
 
 				_sqliteDataAccess.ClearTodaysAccess();
-			
+				_sqliteDataAccess.DeleteAllActions();
+
 				result = await _emailSender.SendEmailWithAttachmentAsync(emailFrom, emailTo, $"{totalIngresos} Ingresos de hoy {date}", message, excelFile);
 			}
 			else
@@ -166,63 +181,6 @@ namespace ArduinoClient.WorkingService
 			return res;
 		}
 
-		//private async Task<Dictionary<int, int>> CalcularHorariosPicoAsync()
-		//{
-		//	var entries = await Task.Run(() => _sqliteDataAccess.LoadPeople());
-
-		//	// Diccionario para almacenar el número de ingresos por cada hora
-		//	Dictionary<int, int> ingresosPorHora = new Dictionary<int, int>();
-
-		//	// Iterar sobre cada entrada y agrupar los ingresos por hora
-		//	entries.ForEach(usuario =>
-		//	{
-		//		// Suponiendo que usuario.Log contiene la fecha y hora del ingreso en formato "dd/MM/yyyy - HH:mm - OK"
-		//		var logTime = DateTime.ParseExact(usuario.Log.Substring(0, 16), "dd/MM/yyyy - HH:mm", null);
-		//		int hora = logTime.Hour;
-
-		//		// Contar cuántas veces ocurre cada hora
-		//		if (ingresosPorHora.ContainsKey(hora))
-		//		{
-		//			ingresosPorHora[hora] += 1;
-		//		}
-		//		else
-		//		{
-		//			ingresosPorHora[hora] = 1;
-		//		}
-		//	});
-
-		//	return ingresosPorHora;
-		//}
-		//public async Task GenerarGraficoHorariosPicoAsync()
-		//{
-		//	Dictionary<int, int> ingresosPorHora = await CalcularHorariosPicoAsync();
-
-		//	// Crear un gráfico de barras
-		//	Chart chart = new Chart();
-		//	chart.Width = 600;
-		//	chart.Height = 400;
-
-		//	ChartArea chartArea = new ChartArea();
-		//	chart.ChartAreas.Add(chartArea);
-
-		//	Series series = new Series("Ingresos por hora");
-		//	series.ChartType = SeriesChartType.Column;
-
-		//	// Añadir los puntos al gráfico
-		//	foreach (var ingreso in ingresosPorHora)
-		//	{
-		//		series.Points.AddXY(ingreso.Key + ":00", ingreso.Value); // Ejemplo: "9:00", "10:00", etc.
-		//	}
-
-		//	chart.Series.Add(series);
-
-		//	// Configurar los ejes
-		//	chart.ChartAreas[0].AxisX.Title = "Hora";
-		//	chart.ChartAreas[0].AxisY.Title = "Total de Ingresos";
-		//	chart.Titles.Add("Horarios Pico de Ingresos");
-
-		//	// Guardar el gráfico como imagen
-		//	chart.SaveImage(@"D:\Personal\Proyectos\GymApp\Gym\src\horariosPico.png", ChartImageFormat.Png);
-		//}
+		
 	}
 }

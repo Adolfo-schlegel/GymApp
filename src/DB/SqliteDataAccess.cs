@@ -15,6 +15,37 @@ namespace ArduinoClient
 {
 	public class SqliteDataAccess : ISqliteDataAccess
 	{
+		public int GetActionCount(string actionName)
+		{
+			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+			{
+				cnn.Open();
+				string query = "SELECT IFNULL(Count, 0) FROM AccessActions WHERE ActionName = @ActionName";
+				return cnn.QuerySingleOrDefault<int>(query, new { ActionName = actionName });
+			}
+		}
+		public void DeleteAllActions()
+		{
+			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+			{
+				cnn.Open();
+				string query = "DELETE FROM AccessActions";
+				cnn.Execute(query);
+			}
+		}
+		public void UpdateActionCount(string actionName, int newCount)
+		{
+			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+			{
+				cnn.Open();
+				string query = @"
+            INSERT INTO AccessActions (ActionName, Count)
+            VALUES (@ActionName, @NewCount)
+            ON CONFLICT(ActionName)
+            DO UPDATE SET Count = @NewCount";
+				cnn.Execute(query, new { ActionName = actionName, NewCount = newCount });
+			}
+		}
 		public List<UsuarioDB> LoadPeople()
 		{
 			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
@@ -22,15 +53,6 @@ namespace ArduinoClient
 				cnn.Open();
 				var output = cnn.Query<UsuarioDB>("select * from Usuario", new DynamicParameters());
 				return output.ToList();
-			}
-		}
-		public void LogHistoricalDateAccessUser(int userId, string logLine)
-		{
-			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
-			{
-				cnn.Open();
-				string query = "UPDATE Usuario SET Log = IFNULL(Log, '') || @LogLine || char(10) WHERE Id = @UserId";
-				cnn.Execute(query, new { LogLine = logLine, UserId = userId });
 			}
 		}
 		public void SaveUser(UsuarioDB user)
@@ -121,7 +143,15 @@ namespace ArduinoClient
 				return result;
 			}
 		}
-	
+		public void LogHistoricalDateAccessUser(int userId, string logLine)
+		{
+			using (IDbConnection cnn = new SQLiteConnection(LoadConnectionString()))
+			{
+				cnn.Open();
+				string query = "UPDATE Usuario SET Log = IFNULL(Log, '') || @LogLine || char(10) WHERE Id = @UserId";
+				cnn.Execute(query, new { LogLine = logLine, UserId = userId });
+			}
+		}
 		public void LogTodaysAccess(int userId, string logLine)
 		{
 			try
