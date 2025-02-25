@@ -3,6 +3,7 @@
 
 #define SS_PIN 10
 #define RST_PIN 9
+#define TRANSMITTER_NUMBER 1  // Define your transmitter number
 
 const int greenLed = 4;  // LED verde para acceso permitido
 const int redLed = 5;    // LED rojo para acceso denegado
@@ -17,6 +18,7 @@ const unsigned long debounceDelay = 1000;  // Retardo para evitar lecturas conse
 
 unsigned long pulseDuration = 2000;  // Duración del pulso en milisegundos
 unsigned long restDuration = 700;  // Tiempo de descanso antes de otro pulso
+
 
 void setup()  {
   Serial.begin(9600);    
@@ -53,7 +55,7 @@ void handleRFID() {
     // Verificar si el UID es diferente al último leído
     if (strcmp(currentUID, lastUID) != 0) {     
       strcpy(lastUID, currentUID);  // Actualizar el último UID leído
-      Serial.println("Card UID: " + String(currentUID));  // Enviar el UID por el puerto serial  
+      Serial.println("Transmitter " + String(TRANSMITTER_NUMBER) + ": Card UID: " + String(currentUID));  // Enviar el UID junto al número del transmisor
 
       lastReadTime = millis();  // Actualizar el tiempo de la última lectura
       cardDetected = true;  // Establecer que se ha detectado una tarjeta
