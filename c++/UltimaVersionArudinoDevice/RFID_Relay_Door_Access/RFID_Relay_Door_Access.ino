@@ -16,7 +16,7 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 unsigned long lastReadTime = 0;  // Almacenar el tiempo de la última lectura
 const unsigned long debounceDelay = 1000;  // Retardo para evitar lecturas consecutivas (1 segundo)
 
-unsigned long pulseDuration = 2000;  // Duración del pulso en milisegundos
+unsigned long pulseDuration = 3000;  // Duración del pulso en milisegundos
 unsigned long restDuration = 700;  // Tiempo de descanso antes de otro pulso
 
 
@@ -55,8 +55,9 @@ void handleRFID() {
     // Verificar si el UID es diferente al último leído
     if (strcmp(currentUID, lastUID) != 0) {     
       strcpy(lastUID, currentUID);  // Actualizar el último UID leído
-      Serial.println("Transmitter " + String(TRANSMITTER_NUMBER) + ": Card UID: " + String(currentUID));  // Enviar el UID junto al número del transmisor
-
+      //Serial.println("Transmitter " + String(TRANSMITTER_NUMBER) + ": Card UID: " + String(currentUID));  // Enviar el UID junto al número del transmisor
+      Serial.println("Card UID: " + String(currentUID));  // Enviar el UID junto al número del transmisor
+      
       lastReadTime = millis();  // Actualizar el tiempo de la última lectura
       cardDetected = true;  // Establecer que se ha detectado una tarjeta
       
@@ -95,15 +96,12 @@ void performActionE() {
 
   tone(buzzer, 500, 500);
   tone(buzzer, 500, 500);
-  delay(1000);   
-
-  // Realiza 5 vueltas
-  for (int i = 0; i < 2; i++) {
-    digitalWrite(relay, HIGH);  // Activa la cerradura
-    delay(pulseDuration);       // Mantiene la cerradura activada por el tiempo definido
-    digitalWrite(relay, LOW);   // Desactiva la cerradura
-    delay(restDuration);        // Espera un tiempo de descanso antes del siguiente ciclo
-  }
+  delay(2000);   
+  
+  digitalWrite(relay, HIGH);  // Activa la cerradura
+  delay(pulseDuration);       // Mantiene la cerradura activada por el tiempo definido
+  digitalWrite(relay, LOW);   // Desactiva la cerradura
+  //delay(restDuration);        // Espera un tiempo de descanso antes del siguiente ciclo (ya no hay ciclo for, me servia para las cerraduras magneticas pq sino se calientan una locura si estan encendidas mas de 1 segundo, hay que dejarlas descansar wacho)
 
   digitalWrite(greenLed, LOW);  // Apagar el LED verde cuando termine
 }

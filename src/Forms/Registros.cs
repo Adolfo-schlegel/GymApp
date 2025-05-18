@@ -121,7 +121,7 @@ namespace ArduinoClient
 						lblMonto.Text = ScannedUser.Monto.ToString();
 						lblMedio.Text = ScannedUser.MedioPago;
 						lblSexo.Text = ScannedUser.Sexo;
-						lblFecha.Text = ScannedUser.Fecha.ToString();
+						lblFecha.Text = ScannedUser.Fecha;
 						lblDaysLeft.Text = ScannedUser.daysLeft().ToString();
 						lblCodigo.Text = ScannedUser.Codigo;
 					}
@@ -246,7 +246,7 @@ namespace ArduinoClient
 
 				ModifyUsuario userForm = new ModifyUsuario(_arduinoManager, _sqliteDataAccess);
 
-				userForm.fillTextBoxUser(user.Codigo, user.Id, user.Nombre, user.Apellido, user.Documento.ToString(), user.Sexo,user.Celular.ToString(), user.MedioPago, user.Fecha.ToString(), user.Monto.ToString(), user.Correo, user.Log);
+				userForm.fillTextBoxUser(user.Codigo, user.Id, user.Nombre, user.Apellido, user.Documento.ToString(), user.Sexo,user.Celular.ToString(), user.MedioPago, user.Fecha, user.Monto.ToString(), user.Correo, user.Log);
 
 				userForm.ShowDialog();
 

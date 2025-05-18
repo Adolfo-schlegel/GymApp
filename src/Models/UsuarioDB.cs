@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace ArduinoClient.Models
 		public bool isUpToDate()
 		{
 			// Normalizamos las fechas
-			DateTime fechaUsuario = DateTime.Parse(Fecha).Date;
+			DateTime fechaUsuario = DateTime.ParseExact(Fecha, "dd/M/yyyy", CultureInfo.InvariantCulture).Date;
 			DateTime fechaActual = DateTime.Today;
 
 			// Comprobamos si la diferencia es de 30 días o menos
@@ -34,13 +35,25 @@ namespace ArduinoClient.Models
 
 		public int daysLeft()
 		{
-			// Normalizamos ambas fechas para ignorar la hora
-			DateTime fechaUsuario = DateTime.Parse(Fecha).Date; // Solo la fecha
-			DateTime fechaActual = DateTime.Today; // Ya es solo la fecha
+			string[] formatosAceptados = {
+		"dd/MM/yyyy", "d/M/yyyy",  // Con y sin ceros
+		"dd-MM-yyyy", "d-M-yyyy",  // También con guiones
+	};
+
+			DateTime fechaUsuario;
+			if (!DateTime.TryParseExact(Fecha, formatosAceptados, CultureInfo.InvariantCulture,
+										DateTimeStyles.None, out fechaUsuario))
+			{
+				throw new FormatException("Fecha inválida: " + Fecha);
+			}
+
+			fechaUsuario = fechaUsuario.Date;
+			DateTime fechaActual = DateTime.Today;
 
 			// Calcula los días restantes hasta que la fecha esté desactualizada
 			TimeSpan diferencia = fechaUsuario.AddDays(30) - fechaActual;
 			return (int)diferencia.TotalDays;
 		}
+
 	}
 }

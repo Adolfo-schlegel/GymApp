@@ -84,7 +84,7 @@ namespace ArduinoClient
 				Sexo = comboBox1.Text,
 				Celular = celular,
 				MedioPago = cbMedio.Text,
-				Fecha = dateTimePicker1.Value.ToString("dd-MM-yyyy"),
+				Fecha = dateTimePicker1.Value.ToString("dd/M/yyyy"),
 				Monto = monto, 
 				Correo = txtAddres.Text + "@" + txtCorreo.Text
 			};

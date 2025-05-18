@@ -97,7 +97,7 @@ namespace ArduinoClient.Tools
 			worksheet.Cell(1, 9).Value = "Medio";
 			worksheet.Cell(1, 10).Value = "Correo";
 			worksheet.Cell(1, 11).Value = "Codigo";
-			worksheet.Cell(1, 11).Value = "Log";
+			worksheet.Cell(1, 12).Value = "Log";
 
 			PrintRowInblue(1);
 		}
@@ -150,7 +150,34 @@ namespace ArduinoClient.Tools
 		}
 		public void SaveAs(string path)
 		{
-			workbook.SaveAs(path);
+			using (var tempWorkbook = new XLWorkbook())
+			{
+				// Copiá el contenido de `this.workbook` al `tempWorkbook`
+				foreach (var ws in workbook.Worksheets)
+					ws.CopyTo(tempWorkbook, ws.Name);
+
+				using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None))
+				{
+					tempWorkbook.SaveAs(stream);
+				}
+			}
 		}
+
+
+		public static bool IsFileInUse(string path)
+		{
+			try
+			{
+				using (FileStream fs = File.Open(path, FileMode.Open, FileAccess.ReadWrite, FileShare.None))
+				{
+					return false;
+				}
+			}
+			catch (IOException)
+			{
+				return true;
+			}
+		}
+
 	}
 }
